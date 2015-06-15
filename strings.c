@@ -136,7 +136,7 @@ static int strings_intern_collision(struct strings *strings, tree_node_t *node,
             break;
         if (!node->next) {
             node = node->next = create_node(strings, hash, string);
-            if (!node)
+            if (UNLIKELY(!node))
                 return 1;
             break;
         }
@@ -201,13 +201,9 @@ const char *strings_lookup_id(struct strings *strings, uint32_t id)
     if (UNLIKELY(id > strings->total))
         return NULL;
 
-    int hashes_per_page = (BLOCK_PAGE_SIZE - sizeof(int)) / sizeof(uint32_t);
-    int page_num = (id - 1) / hashes_per_page;
-    int page_offset = (id - 1) % hashes_per_page;
-
-    const void *page = strings->hashes->pages[page_num];
-    uint32_t hash = \
-        *(uint32_t *)((uintptr_t)page + page_offset * sizeof(uint32_t));
+    const void *hash_ptr = \
+        block_get_offset(strings->hashes, id - 1, sizeof(uint32_t));
+    uint32_t hash = *(const uint32_t *)hash_ptr;
 
     tree_node_t *node = find_node(strings, hash);
     if (LIKELY(node))

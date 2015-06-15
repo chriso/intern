@@ -138,8 +138,24 @@ const void *block_get_page(const struct block *block, int page_num,
     return page;
 }
 
-void block_stats(const struct block *block, int *bytes_allocated,
-                 int *bytes_used)
+const void *block_get_offset(const struct block *block, size_t offset,
+                             int bytes)
+{
+    size_t allocs_per_page = (BLOCK_PAGE_SIZE - sizeof(int)) / bytes;
+    size_t page_num = offset / allocs_per_page;
+    size_t page_offset = offset % allocs_per_page;
+
+    assert(page_num < block->count - 1 || \
+           (page_num == block->count - 1 && \
+            page_offset + bytes <= block->offset));
+
+    void *page = block->pages[page_num];
+
+    return (const void *)((uintptr_t)page + page_offset * bytes);
+}
+
+void block_stats(const struct block *block, size_t *bytes_allocated,
+                 size_t *bytes_used)
 {
     int page_bytes_used = *bytes_allocated = *bytes_used = 0;
     for (int i = 0; i < block->count; i++) {
