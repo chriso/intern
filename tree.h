@@ -58,26 +58,6 @@ struct {								\
     rbtn_black_set(a_type, a_field, &(a_rbt)->rbt_nil);			\
 } while (0)
 
-#define	rbtn_first(a_type, a_field, a_rbt, a_root, r_node) do {		\
-    (r_node) = (a_root);						\
-    if ((r_node) != &(a_rbt)->rbt_nil) {				\
-	for (;								\
-	  rbtn_left_get(a_type, a_field, (r_node)) != &(a_rbt)->rbt_nil;\
-	  (r_node) = rbtn_left_get(a_type, a_field, (r_node))) {	\
-	}								\
-    }									\
-} while (0)
-
-#define	rbtn_last(a_type, a_field, a_rbt, a_root, r_node) do {		\
-    (r_node) = (a_root);						\
-    if ((r_node) != &(a_rbt)->rbt_nil) {				\
-	for (; rbtn_right_get(a_type, a_field, (r_node)) !=		\
-	  &(a_rbt)->rbt_nil; (r_node) = rbtn_right_get(a_type, a_field,	\
-	  (r_node))) {							\
-	}								\
-    }									\
-} while (0)
-
 #define	rbtn_rotate_left(a_type, a_field, a_node, r_node) do {		\
     (r_node) = rbtn_right_get(a_type, a_field, (a_node));		\
     rbtn_right_set(a_type, a_field, (a_node),				\
