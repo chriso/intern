@@ -13,6 +13,6 @@ int strings_intern(struct strings*, const char *string, uint32_t *id);
 
 uint32_t strings_lookup(const struct strings*, const char *string);
 
-const char *strings_lookup_id(const struct strings*, uint32_t id);
+const char *strings_lookup_id(struct strings*, uint32_t id);
 
 #endif

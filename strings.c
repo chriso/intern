@@ -1,17 +1,21 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <assert.h>
 
 #include "strings.h"
 #include "block.h"
+#include "unsigned.h"
 
 #define RB_COMPACT
 #include "rb.h"
 
 #define LIKELY(cond) __builtin_expect(!!(cond), 1)
 #define UNLIKELY(cond) __builtin_expect(!!(cond), 0)
+
+const static uint32_t unsigned_tag = 0x80000000;
 
 typedef struct tree_node_s tree_node_t;
 struct tree_node_s {
@@ -32,14 +36,16 @@ static int tree_cmp(tree_node_t *a, tree_node_t *b)
 rb_gen(static, tree_, tree_t, tree_node_t, tree_link, tree_cmp);
 
 struct strings {
-    uint32_t total;
     struct block *hashes;
     struct block *strings;
     struct block *tree_nodes;
     tree_t hash_map;
+    uint32_t total;
+    char buffer[11];
 };
 
-struct strings *strings_new() {
+struct strings *strings_new()
+{
     struct strings *strings = malloc(sizeof(*strings));
     if (!strings)
         return NULL;
@@ -55,6 +61,7 @@ struct strings *strings_new() {
     strings->total = 0;
 
     return strings;
+
 error:
     if (strings->hashes)
         block_free(strings->hashes);
@@ -106,7 +113,10 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     node->string = (const char *)string_ptr;
     node->next = NULL;
 
+    assert(node->id < unsigned_tag);
+
     return node;
+
 error:
     free(node);
     return NULL;
@@ -140,6 +150,14 @@ static int strings_intern_collision(struct strings *strings, tree_node_t *node,
 
 int strings_intern(struct strings *strings, const char *string, uint32_t *id)
 {
+    if (is_small_unsigned(string)) {
+        uint32_t number = to_unsigned(string);
+        if (number < unsigned_tag) {
+            *id = number | unsigned_tag;
+            return 0;
+        }
+    }
+
     uint32_t hash = strings_hash(string);
     tree_node_t *node = find_node(strings, hash);
     if (node) {
@@ -150,12 +168,20 @@ int strings_intern(struct strings *strings, const char *string, uint32_t *id)
             return 1;
         tree_insert(&strings->hash_map, node);
     }
+
     *id = node->id;
+
     return 0;
 }
 
 uint32_t strings_lookup(const struct strings *strings, const char *string)
 {
+    if (is_small_unsigned(string)) {
+        uint32_t number = to_unsigned(string);
+        if (number < unsigned_tag)
+            return number | unsigned_tag;
+    }
+
     uint32_t hash = strings_hash(string);
     tree_node_t *node = find_node(strings, hash);
     if (node)
@@ -163,11 +189,17 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
             if (!strcmp(node->string, string))
                 return node->id;
         } while ((node = node->next));
+
     return 0;
 }
 
-const char *strings_lookup_id(const struct strings *strings, uint32_t id)
+const char *strings_lookup_id(struct strings *strings, uint32_t id)
 {
+    if (id & unsigned_tag) {
+        to_string(strings->buffer, id & ~unsigned_tag);
+        return (const char *)strings->buffer;
+    }
+
     if (UNLIKELY(id > strings->total))
         return NULL;
 
@@ -182,7 +214,7 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id)
     tree_node_t *node = find_node(strings, hash);
     if (LIKELY(node))
         do {
-            if (node->id == id)
+            if (LIKELY(node->id == id))
                 return node->string;
         } while ((node = node->next));
 

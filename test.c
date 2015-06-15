@@ -4,6 +4,7 @@
 
 #include "block.h"
 #include "strings.h"
+#include "unsigned.h"
 
 static const int page_size = (int)(BLOCK_PAGE_SIZE - sizeof(int));
 
@@ -54,35 +55,15 @@ static void test_intern()
     struct strings *strings = strings_new();
     assert(strings);
 
-    uint32_t id = 0;
-
-    assert(!strings_intern(strings, "foo", &id) && id == 1);
-    assert(!strings_intern(strings, "bar", &id) && id == 2);
-    assert(!strings_intern(strings, "qux", &id) && id == 3);
-
-    assert(!strings_intern(strings, "foo", &id) && id == 1);
-    assert(!strings_intern(strings, "bar", &id) && id == 2);
-    assert(!strings_intern(strings, "qux", &id) && id == 3);
-
-    assert(!strings_intern(strings, "abcdef", &id) && id == 4);
-
-    assert(strings_lookup(strings, "foo") == 1);
-    assert(strings_lookup(strings, "bar") == 2);
-    assert(strings_lookup(strings, "qux") == 3);
-    assert(strings_lookup(strings, "abcdef") == 4);
-    assert(!strings_lookup(strings, "foobar"));
-
-    strings_free(strings);
-
-    strings = strings_new();
-    assert(strings);
-    char buffer[10];
+    char buffer[12] = {'x'};
     const char *string;
+    uint32_t id;
 
-    int count = 1000000;
+    unsigned count = 1000000;
 
-    for (int i = 1; i <= count; i++) {
-        sprintf(buffer, "%i", i);
+    // test interning strings
+    for (unsigned i = 1; i <= count; i++) {
+        to_string(buffer + 1, i);
 
         assert(!strings_intern(strings, buffer, &id));
         assert(id == i);
@@ -95,6 +76,34 @@ static void test_intern()
         string = strings_lookup_id(strings, id);
         assert(string && !strcmp(buffer, string));
     }
+
+    // test interning unsigned int strings
+    for (unsigned i = 1; i <= count; i++) {
+        to_string(buffer, i);
+
+        assert(!strings_intern(strings, buffer, &id));
+        assert(i == (id & 0x7FFFFFFF));
+
+        assert(!strings_intern(strings, buffer, &id));
+        assert(i == (id & 0x7FFFFFFF));
+
+        assert(strings_lookup(strings, buffer) == id);
+
+        string = strings_lookup_id(strings, id);
+        assert(string && !strcmp(buffer, string));
+    }
+
+    assert(!strings_intern(strings, "2147483648", &id));
+    assert(id == count + 1);
+
+    assert(!strings_intern(strings, "4294967295", &id));
+    assert(id == count + 2);
+
+    assert(!strings_intern(strings, "4294967296", &id));
+    assert(id == count + 3);
+
+    assert(!strings_intern(strings, "2147483647", &id));
+    assert(id == 0xFFFFFFFF);
 
     strings_free(strings);
 }
