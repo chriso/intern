@@ -2,7 +2,7 @@
 #define BLOCK_H_
 
 #define BLOCK_MMAP
-#define BLOCK_PAGE_SIZE 1048576
+#define BLOCK_PAGE_SIZE 65536
 
 struct block {
     void **pages;
