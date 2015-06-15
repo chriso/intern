@@ -137,3 +137,14 @@ const void *block_get_page(const struct block *block, int page_num,
         *bytes_used = *get_offset_ptr(page);
     return page;
 }
+
+void block_stats(const struct block *block, int *bytes_allocated,
+                 int *bytes_used)
+{
+    int page_bytes_used = *bytes_allocated = *bytes_used = 0;
+    for (int i = 0; i < block->count; i++) {
+        block_get_page(block, i, &page_bytes_used);
+        *bytes_allocated += BLOCK_PAGE_SIZE;
+        *bytes_used += page_bytes_used;
+    }
+}

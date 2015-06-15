@@ -18,4 +18,7 @@ void *block_alloc(struct block*, int bytes);
 
 const void *block_get_page(const struct block*, int page, int *bytes_used);
 
+void block_stats(const struct block *block, int *bytes_allocated,
+                 int *bytes_used);
+
 #endif
