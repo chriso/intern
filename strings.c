@@ -8,9 +8,7 @@
 #include "strings.h"
 #include "block.h"
 #include "unsigned.h"
-
-#define RB_COMPACT
-#include "rb.h"
+#include "tree.h"
 
 #define LIKELY(cond) __builtin_expect(!!(cond), 1)
 #define UNLIKELY(cond) __builtin_expect(!!(cond), 0)
