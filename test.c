@@ -1,7 +1,9 @@
-#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "block.h"
+#include "strings.h"
 
 static const int page_size = (int)(BLOCK_PAGE_SIZE - sizeof(int));
 
@@ -26,6 +28,7 @@ static void test_block_alloc_with_alloc_size(int alloc_size)
             }
             offset = 0;
         }
+
         void *expected_ptr = \
             (void *)((uintptr_t)block->pages[block->count - 1] + offset);
         assert(ptr == expected_ptr);
@@ -46,8 +49,59 @@ static void test_block_alloc()
         test_block_alloc_with_alloc_size(alloc_sizes[i]);
 }
 
+static void test_intern()
+{
+    struct strings *strings = strings_new();
+    assert(strings);
+
+    uint32_t id = 0;
+
+    assert(!strings_intern(strings, "foo", &id) && id == 1);
+    assert(!strings_intern(strings, "bar", &id) && id == 2);
+    assert(!strings_intern(strings, "qux", &id) && id == 3);
+
+    assert(!strings_intern(strings, "foo", &id) && id == 1);
+    assert(!strings_intern(strings, "bar", &id) && id == 2);
+    assert(!strings_intern(strings, "qux", &id) && id == 3);
+
+    assert(!strings_intern(strings, "abcdef", &id) && id == 4);
+
+    assert(strings_lookup(strings, "foo") == 1);
+    assert(strings_lookup(strings, "bar") == 2);
+    assert(strings_lookup(strings, "qux") == 3);
+    assert(strings_lookup(strings, "abcdef") == 4);
+    assert(!strings_lookup(strings, "foobar"));
+
+    strings_free(strings);
+
+    strings = strings_new();
+    assert(strings);
+    char buffer[10];
+    const char *string;
+
+    int count = 1000000;
+
+    for (int i = 1; i <= count; i++) {
+        sprintf(buffer, "%i", i);
+
+        assert(!strings_intern(strings, buffer, &id));
+        assert(id == i);
+
+        assert(!strings_intern(strings, buffer, &id));
+        assert(id == i);
+
+        assert(strings_lookup(strings, buffer) == id);
+
+        string = strings_lookup_id(strings, id);
+        assert(string && !strcmp(buffer, string));
+    }
+
+    strings_free(strings);
+}
+
 int main()
 {
     test_block_alloc();
+    test_intern();
     return 0;
 }
