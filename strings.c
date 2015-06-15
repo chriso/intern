@@ -16,9 +16,9 @@
 typedef struct tree_node_s tree_node_t;
 struct tree_node_s {
     uint32_t hash;
-    rb_node(tree_node_t) tree_link;
     uint32_t id;
     const char *string;
+    rb_node(tree_node_t) tree_link;
     tree_node_t *next;
 };
 
