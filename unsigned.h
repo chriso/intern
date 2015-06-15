@@ -13,7 +13,7 @@ static const char digit_pairs[201] = {
     "90919293949596979899"
 };
 
-static void to_string(char *buffer, unsigned num)
+static void to_string(char *buffer, uint32_t num)
 {
     if (!num) {
         buffer[0] = '0';
