@@ -150,7 +150,7 @@ int strings_intern(struct strings *strings, const char *string, uint32_t *id)
 {
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
-        if (number < unsigned_tag) {
+        if (LIKELY(number < unsigned_tag)) {
             *id = number | unsigned_tag;
             return 0;
         }
@@ -176,7 +176,7 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
 {
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
-        if (number < unsigned_tag)
+        if (LIKELY(number < unsigned_tag))
             return number | unsigned_tag;
     }
 
@@ -195,7 +195,7 @@ const char *strings_lookup_id(struct strings *strings, uint32_t id)
 {
     if (id & unsigned_tag) {
         to_string(strings->buffer, id & ~unsigned_tag);
-        return (const char *)strings->buffer;
+        return strings->buffer;
     }
 
     if (UNLIKELY(id > strings->total))
