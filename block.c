@@ -1,5 +1,4 @@
 #include <stdlib.h>
-#include <stddef.h>
 #include <assert.h>
 
 #include "block.h"
@@ -74,7 +73,7 @@ static inline void *last_page(const struct block *block)
 
 static inline int *get_offset_ptr(const void *page)
 {
-    return (int *)((ptrdiff_t)page + page_size);
+    return (int *)((uintptr_t)page + page_size);
 }
 
 static inline void reset_offset(struct block *block)
@@ -122,7 +121,7 @@ void *block_alloc(struct block *block, int size)
         page = last_page(block);
     else if (!(page = add_page(block)))
         return NULL;
-    void *ptr = (void *)((ptrdiff_t)page + block->offset);
+    void *ptr = (void *)((uintptr_t)page + block->offset);
     block->offset += size;
     return ptr;
 }

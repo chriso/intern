@@ -18,7 +18,7 @@ static void test_block_alloc_with_alloc_size(int alloc_size)
         if (offset + alloc_size > page_size) {
             if (block->count > 1) {
                 void *page = block->pages[block->count - 2];
-                int *offset_ptr = (int *)((ptrdiff_t)page + page_size);
+                int *offset_ptr = (int *)((uintptr_t)page + page_size);
                 assert(*offset_ptr = offset);
                 assert(page == block_get_page(block, block->count - 2,
                                               offset_ptr));
@@ -27,7 +27,7 @@ static void test_block_alloc_with_alloc_size(int alloc_size)
             offset = 0;
         }
         void *expected_ptr = \
-            (void *)((ptrdiff_t)block->pages[block->count - 1] + offset);
+            (void *)((uintptr_t)block->pages[block->count - 1] + offset);
         assert(ptr == expected_ptr);
         offset += alloc_size;
 
