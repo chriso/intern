@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include <assert.h>
 
 #include "block.h"
@@ -8,8 +9,12 @@
 
 static inline void *alloc_page()
 {
-    return mmap(NULL, BLOCK_PAGE_SIZE, PROT_READ | PROT_WRITE,
-                MAP_ANON | MAP_PRIVATE, -1, 0);
+    void *ptr = mmap(NULL, BLOCK_PAGE_SIZE, PROT_READ | PROT_WRITE,
+                     MAP_ANON | MAP_PRIVATE, -1, 0);
+    if (!ptr)
+        return NULL;
+    memset(ptr, 0, BLOCK_PAGE_SIZE);
+    return ptr;
 }
 
 static inline void free_page(void *ptr)
@@ -21,7 +26,7 @@ static inline void free_page(void *ptr)
 
 static inline void *alloc_page()
 {
-    return malloc(BLOCK_PAGE_SIZE);
+    return calloc(1, BLOCK_PAGE_SIZE);
 }
 
 static inline void free_page(void *ptr)
