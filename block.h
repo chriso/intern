@@ -7,7 +7,6 @@
 struct block {
     void **pages;
     int count;
-    int offset;
 };
 
 struct block *block_new(void);

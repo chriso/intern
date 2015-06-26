@@ -52,7 +52,6 @@ struct block *block_new() {
         goto error;
 
     block->count = 1;
-    block->offset = 0;
 
     return block;
 error:
@@ -85,8 +84,9 @@ static inline void reset_offset(struct block *block)
 {
     void *page = last_page(block);
     int *offset = get_offset_ptr(page);
-    *offset = block->offset;
-    block->offset = 0;
+    int *page_offset = get_offset_ptr(page);
+    *offset = *page_offset;
+    *page_offset = 0;
 }
 
 static inline int next_pow_2(int num)
@@ -121,13 +121,14 @@ static void *add_page(struct block *block)
 void *block_alloc(struct block *block, int size)
 {
     assert(size && size <= page_size);
-    void *page;
-    if (page_size - block->offset >= size)
-        page = last_page(block);
-    else if (!(page = add_page(block)))
-        return NULL;
-    void *ptr = (void *)((uintptr_t)page + block->offset);
-    block->offset += size;
+    void *page = last_page(block);
+    int *page_offset = get_offset_ptr(page);
+    if (page_size - *page_offset < size)
+        if (!(page = add_page(block)))
+            return NULL;
+    page_offset = get_offset_ptr(page);
+    void *ptr = (void *)((uintptr_t)page + *page_offset);
+    *page_offset += size;
     return ptr;
 }
 
@@ -136,10 +137,7 @@ const void *block_get_page(const struct block *block, int page_num,
 {
     assert(page_num < block->count);
     void *page = block->pages[page_num];
-    if (page_num == block->count - 1)
-        *bytes_used = block->offset;
-    else
-        *bytes_used = *get_offset_ptr(page);
+    *bytes_used = *get_offset_ptr(page);
     return page;
 }
 
@@ -150,11 +148,13 @@ const void *block_get_offset(const struct block *block, size_t offset,
     size_t page_num = offset / allocs_per_page;
     size_t page_offset = offset % allocs_per_page;
 
-    assert(page_num < block->count - 1 || \
-           (page_num == block->count - 1 && \
-            page_offset + bytes <= block->offset));
+    assert(page_num <= block->count - 1);
 
     void *page = block->pages[page_num];
+
+    assert(page_num < block->count - 1 || \
+           (page_num == block->count - 1 && \
+            page_offset + bytes <= *get_offset_ptr(page)));
 
     return (const void *)((uintptr_t)page + page_offset * bytes);
 }
