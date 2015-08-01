@@ -1,8 +1,9 @@
 #ifndef BLOCK_H_
 #define BLOCK_H_
 
-//#define BLOCK_MMAP
-#define BLOCK_PAGE_SIZE 65536
+#ifndef BLOCK_PAGE_SIZE
+# define BLOCK_PAGE_SIZE 65536
+#endif
 
 struct block {
     void **pages;
