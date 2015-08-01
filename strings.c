@@ -33,7 +33,7 @@ static int tree_cmp(tree_node_t *a, tree_node_t *b)
     return a->hash < b->hash ? -1 : (a->hash > b->hash ? 1 : 0);
 }
 
-rb_gen(static, tree_, tree_t, tree_node_t, tree_link, tree_cmp);
+rb_gen(static, tree_, tree_t, tree_node_t, tree_link, tree_cmp)
 
 struct strings {
     struct block *hashes;
