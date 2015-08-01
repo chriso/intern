@@ -7,13 +7,15 @@
 
 #include "strings.h"
 #include "block.h"
-#include "unsigned.h"
 #include "tree.h"
+
+#ifdef INLINE_UNSIGNED
+# include "unsigned.h"
+const static uint32_t unsigned_tag = 0x80000000;
+#endif
 
 #define LIKELY(cond) __builtin_expect(!!(cond), 1)
 #define UNLIKELY(cond) __builtin_expect(!!(cond), 0)
-
-const static uint32_t unsigned_tag = 0x80000000;
 
 typedef struct tree_node_s tree_node_t;
 struct tree_node_s {
@@ -111,7 +113,9 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     node->string = (const char *)string_ptr;
     node->next = NULL;
 
+#ifdef INLINE_UNSIGNED
     assert(node->id < unsigned_tag);
+#endif
 
     return node;
 
@@ -148,6 +152,7 @@ static int strings_intern_collision(struct strings *strings, tree_node_t *node,
 
 int strings_intern(struct strings *strings, const char *string, uint32_t *id)
 {
+#ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
         if (LIKELY(number < unsigned_tag)) {
@@ -155,6 +160,7 @@ int strings_intern(struct strings *strings, const char *string, uint32_t *id)
             return 0;
         }
     }
+#endif
 
     uint32_t hash = strings_hash(string);
     tree_node_t *node = find_node(strings, hash);
@@ -174,11 +180,13 @@ int strings_intern(struct strings *strings, const char *string, uint32_t *id)
 
 uint32_t strings_lookup(const struct strings *strings, const char *string)
 {
+#ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
         if (LIKELY(number < unsigned_tag))
             return number | unsigned_tag;
     }
+#endif
 
     uint32_t hash = strings_hash(string);
     tree_node_t *node = find_node(strings, hash);
@@ -193,10 +201,12 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
 
 const char *strings_lookup_id(struct strings *strings, uint32_t id)
 {
+#ifdef INLINE_UNSIGNED
     if (id & unsigned_tag) {
         to_string(strings->buffer, id & ~unsigned_tag);
         return strings->buffer;
     }
+#endif
 
     if (UNLIKELY(id > strings->total))
         return NULL;

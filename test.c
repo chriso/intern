@@ -77,6 +77,7 @@ static void test_intern()
         assert(string && !strcmp(buffer, string));
     }
 
+#ifdef INLINE_UNSIGNED
     // test interning unsigned int strings
     for (unsigned i = 1; i <= count; i++) {
         to_string(buffer, i);
@@ -92,6 +93,7 @@ static void test_intern()
         string = strings_lookup_id(strings, id);
         assert(string && !strcmp(buffer, string));
     }
+#endif
 
     assert(!strings_intern(strings, "2147483648", &id));
     assert(id == count + 1);
@@ -103,7 +105,11 @@ static void test_intern()
     assert(id == count + 3);
 
     assert(!strings_intern(strings, "2147483647", &id));
+#ifdef INLINE_UNSIGNED
     assert(id == 0xFFFFFFFF);
+#else
+    assert(id == count + 4);
+#endif
 
     strings_free(strings);
 }
