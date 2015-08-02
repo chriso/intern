@@ -80,15 +80,6 @@ static inline int *get_offset_ptr(const void *page)
     return (int *)((uintptr_t)page + page_size);
 }
 
-static inline void reset_offset(struct block *block)
-{
-    void *page = last_page(block);
-    int *offset = get_offset_ptr(page);
-    int *page_offset = get_offset_ptr(page);
-    *offset = *page_offset;
-    *page_offset = 0;
-}
-
 static inline int next_pow_2(int num)
 {
     num--;
@@ -114,7 +105,6 @@ static void *add_page(struct block *block)
     void *page = alloc_page();
     if (!page)
         return NULL;
-    reset_offset(block);
     return block->pages[block->count++] = page;
 }
 
