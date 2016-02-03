@@ -1,8 +1,5 @@
 /* (c) http://www.canonware.com/jemalloc/ */
 
-#ifndef RB_H_
-#define	RB_H_
-
 #define	rb_node(a_type)							\
 struct {								\
     a_type *rbn_left;							\
@@ -157,5 +154,3 @@ a_prefix##insert(a_rbt_type *rbtree, a_type *node) {			\
     rbtree->rbt_root = path->node;					\
     rbtn_black_set(a_type, a_field, rbtree->rbt_root);			\
 }									\
-
-#endif

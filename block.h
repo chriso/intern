@@ -1,6 +1,3 @@
-#ifndef BLOCK_H_
-#define BLOCK_H_
-
 #ifndef BLOCK_PAGE_SIZE
 # define BLOCK_PAGE_SIZE 65536
 #endif
@@ -23,5 +20,3 @@ const void *block_get_offset(const struct block *block, size_t offset,
 
 void block_stats(const struct block *block, size_t *bytes_allocated,
                  size_t *bytes_used);
-
-#endif
