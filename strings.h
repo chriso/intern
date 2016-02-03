@@ -2,6 +2,7 @@
 #define INTERN_STRINGS_H_
 
 #include <stdint.h>
+#include <stdbool.h>
 
 struct strings;
 
@@ -12,9 +13,9 @@ struct strings *strings_new(void);
 void strings_free(struct strings*);
 
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
-// This function returns zero if the string was successfully interned. Note
+// This function returns true if the string was successfully interned. Note
 // that IDs start at 1 and increment towards UINT_MAX
-int strings_intern(struct strings*, const char *string, uint32_t *id);
+bool strings_intern(struct strings*, const char *string, uint32_t *id);
 
 // Lookup the ID for a string. This function returns zero if the string
 // does not exist in the repository

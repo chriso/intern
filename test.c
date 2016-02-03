@@ -65,10 +65,10 @@ static void test_intern()
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer + 1, i);
 
-        assert(!strings_intern(strings, buffer, &id));
+        assert(strings_intern(strings, buffer, &id));
         assert(id == i);
 
-        assert(!strings_intern(strings, buffer, &id));
+        assert(strings_intern(strings, buffer, &id));
         assert(id == i);
 
         assert(strings_lookup(strings, buffer) == id);
@@ -82,10 +82,10 @@ static void test_intern()
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer, i);
 
-        assert(!strings_intern(strings, buffer, &id));
+        assert(strings_intern(strings, buffer, &id));
         assert(i == (id & 0x7FFFFFFF));
 
-        assert(!strings_intern(strings, buffer, &id));
+        assert(strings_intern(strings, buffer, &id));
         assert(i == (id & 0x7FFFFFFF));
 
         assert(strings_lookup(strings, buffer) == id);
@@ -95,16 +95,16 @@ static void test_intern()
     }
 #endif
 
-    assert(!strings_intern(strings, "2147483648", &id));
+    assert(strings_intern(strings, "2147483648", &id));
     assert(id == count + 1);
 
-    assert(!strings_intern(strings, "4294967295", &id));
+    assert(strings_intern(strings, "4294967295", &id));
     assert(id == count + 2);
 
-    assert(!strings_intern(strings, "4294967296", &id));
+    assert(strings_intern(strings, "4294967296", &id));
     assert(id == count + 3);
 
-    assert(!strings_intern(strings, "2147483647", &id));
+    assert(strings_intern(strings, "2147483647", &id));
 #ifdef INLINE_UNSIGNED
     assert(id == 0xFFFFFFFF);
 #else

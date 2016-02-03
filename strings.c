@@ -159,9 +159,9 @@ static tree_node_t *find_node(const struct strings *strings, uint32_t hash)
 }
 
 __attribute__ ((noinline))
-static int strings_intern_collision(struct strings *strings, tree_node_t *node,
-                                    const char *string, uint32_t hash,
-                                    uint32_t *id)
+static bool strings_intern_collision(struct strings *strings,
+                                     tree_node_t *node, const char *string,
+                                     uint32_t hash, uint32_t *id)
 {
     for (;;) {
         if (!strcmp(node->string, string))
@@ -169,23 +169,23 @@ static int strings_intern_collision(struct strings *strings, tree_node_t *node,
         if (!node->next) {
             node = node->next = create_node(strings, hash, string);
             if (UNLIKELY(!node))
-                return 1;
+                return false;
             break;
         }
         node = node->next;
     }
     *id = node->id;
-    return 0;
+    return true;
 }
 
-int strings_intern(struct strings *strings, const char *string, uint32_t *id)
+bool strings_intern(struct strings *strings, const char *string, uint32_t *id)
 {
 #ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
         if (LIKELY(number < unsigned_tag)) {
             *id = number | unsigned_tag;
-            return 0;
+            return true;
         }
     }
 #endif
@@ -197,13 +197,13 @@ int strings_intern(struct strings *strings, const char *string, uint32_t *id)
             return strings_intern_collision(strings, node, string, hash, id);
     } else {
         if (UNLIKELY(!(node = create_node(strings, hash, string))))
-            return 1;
+            return false;
         tree_insert(&strings->hash_map, node);
     }
 
     *id = node->id;
 
-    return 0;
+    return true;
 }
 
 uint32_t strings_lookup(const struct strings *strings, const char *string)
