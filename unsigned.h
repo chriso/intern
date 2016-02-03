@@ -11,11 +11,11 @@ static const char digit_pairs[201] = {
     "90919293949596979899"
 };
 
-static void to_string(char *buffer, uint32_t num)
+static void unsigned_string(char *dest, uint32_t num)
 {
     if (!num) {
-        buffer[0] = '0';
-        buffer[1] = '\0';
+        dest[0] = '0';
+        dest[1] = '\0';
         return;
     }
 
@@ -28,9 +28,9 @@ static void to_string(char *buffer, uint32_t num)
     } else
         size = num >= 100 ? 3 + (num >= 1000) : 1 + (num >= 10);
 
-    buffer[size] = '\0';
+    dest[size] = '\0';
 
-    char *c = &buffer[size - 1];
+    char *c = &dest[size - 1];
     while (num >= 100) {
        int pos = num % 100;
        num /= 100;
@@ -41,29 +41,4 @@ static void to_string(char *buffer, uint32_t num)
         *c-- = '0' + (num % 10);
         num /= 10;
     }
-}
-
-static int is_small_unsigned(const char *string)
-{
-    char c;
-    int numeric = 0;
-    const char *ptr = string;
-    while ((c = *ptr++)) {
-        if (c < '0' || c > '9' || numeric > 10) {
-            numeric = -1;
-            break;
-        }
-        numeric++;
-    }
-    return numeric >= 1 && \
-        (numeric < 10 || (numeric == 10 && string[0] <= '2'));
-}
-
-static uint32_t to_unsigned(const char *string)
-{
-    uint32_t number = 0;
-    char c;
-    while ((c = *string++))
-        number = number * 10 + (c - '0');
-    return number;
 }

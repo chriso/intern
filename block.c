@@ -38,7 +38,8 @@ static inline void free_page(void *ptr)
 
 static const int page_size = (int)(BLOCK_PAGE_SIZE - sizeof(int));
 
-struct block *block_new() {
+struct block *block_new()
+{
     struct block *block = malloc(sizeof(*block));
     if (!block)
         return NULL;

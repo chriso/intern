@@ -63,7 +63,7 @@ static void test_intern()
 
     // test interning strings
     for (unsigned i = 1; i <= count; i++) {
-        to_string(buffer + 1, i);
+        unsigned_string(buffer + 1, i);
 
         assert(!strings_intern(strings, buffer, &id));
         assert(id == i);
@@ -80,7 +80,7 @@ static void test_intern()
 #ifdef INLINE_UNSIGNED
     // test interning unsigned int strings
     for (unsigned i = 1; i <= count; i++) {
-        to_string(buffer, i);
+        unsigned_string(buffer, i);
 
         assert(!strings_intern(strings, buffer, &id));
         assert(i == (id & 0x7FFFFFFF));

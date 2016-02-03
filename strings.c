@@ -10,8 +10,34 @@
 #include "tree.h"
 
 #ifdef INLINE_UNSIGNED
-# include "unsigned.h"
+#include "unsigned.h"
+
 const static uint32_t unsigned_tag = 0x80000000;
+
+static int is_small_unsigned(const char *string)
+{
+    char c;
+    int numeric = 0;
+    const char *ptr = string;
+    while ((c = *ptr++)) {
+        if (c < '0' || c > '9' || numeric > 10) {
+            numeric = -1;
+            break;
+        }
+        numeric++;
+    }
+    return numeric >= 1 && \
+        (numeric < 10 || (numeric == 10 && string[0] <= '2'));
+}
+
+static uint32_t to_unsigned(const char *string)
+{
+    uint32_t number = 0;
+    char c;
+    while ((c = *string++))
+        number = number * 10 + (c - '0');
+    return number;
+}
 #endif
 
 #define LIKELY(cond) __builtin_expect(!!(cond), 1)
@@ -209,7 +235,7 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id)
 {
 #ifdef INLINE_UNSIGNED
     if (id & unsigned_tag) {
-        to_string(strings->buffer, id & ~unsigned_tag);
+        unsigned_string(strings->buffer, id & ~unsigned_tag);
         return strings->buffer;
     }
 #endif
