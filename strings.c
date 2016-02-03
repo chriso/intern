@@ -66,7 +66,7 @@ error:
     if (strings->hashes)
         block_free(strings->hashes);
     if (strings->strings)
-        block_free(strings->hashes);
+        block_free(strings->strings);
     if (strings->tree_nodes)
         block_free(strings->tree_nodes);
     free(strings);
