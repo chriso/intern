@@ -7,3 +7,5 @@
 - Very low fragmentation via a custom block allocator
 - Minimal total overhead per string (currently 48 bytes. Could be lower at the cost of additional fragmentation)
 - Fast: intern many millions of strings per second
+
+See [strings.h](https://github.com/chriso/intern.c/blob/master/strings.h) for usage.
