@@ -41,7 +41,9 @@ struct strings {
     struct block *tree_nodes;
     tree_t hash_map;
     uint32_t total;
+#ifdef INLINE_UNSIGNED
     char buffer[11];
+#endif
 };
 
 struct strings *strings_new()
@@ -199,7 +201,11 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
     return 0;
 }
 
+#ifdef INLINE_UNSIGNED
 const char *strings_lookup_id(struct strings *strings, uint32_t id)
+#else
+const char *strings_lookup_id(const struct strings *strings, uint32_t id)
+#endif
 {
 #ifdef INLINE_UNSIGNED
     if (id & unsigned_tag) {

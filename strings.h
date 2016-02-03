@@ -21,7 +21,15 @@ int strings_intern(struct strings*, const char *string, uint32_t *id);
 uint32_t strings_lookup(const struct strings*, const char *string);
 
 // Lookup the string associated with an ID. This function returns NULL
-// if there is no string with that ID in the repository
-const char *strings_lookup_id(struct strings*, uint32_t id);
+// if there is no string with that ID in the repository. If INLINE_UNSIGNED
+// is defined then the repository will inline unsigned integers into the ID
+// itself. When looking up the string associated with such an ID, the integer
+// is written into an internal buffer which persists until the function is
+// called again
+#ifdef INLINE_UNSIGNED
+  const char *strings_lookup_id(struct strings *strings, uint32_t id);
+#else
+  const char *strings_lookup_id(const struct strings *strings, uint32_t id);
+#endif
 
 #endif
