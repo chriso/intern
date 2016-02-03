@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
-#include <stdint.h>
-#include <stdbool.h>
 #include <assert.h>
 
 #include "strings.h"
