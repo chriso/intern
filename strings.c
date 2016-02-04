@@ -259,3 +259,42 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id) {
 
     return NULL;
 }
+
+void strings_cursor_init(struct strings_cursor *cursor,
+                         const struct strings *strings) {
+    cursor->strings = strings;
+    cursor->page = 0;
+    cursor->offset = 0;
+    cursor->id = 0;
+}
+
+bool strings_cursor_next(struct strings_cursor *cursor) {
+    const struct block *block = cursor->strings->strings;
+    if (LIKELY(cursor->id)) {
+        const char *string = strings_cursor_string(cursor);
+        cursor->offset += strlen(string) + 1;
+        if (UNLIKELY(cursor->offset >= block->offsets[cursor->page])) {
+            cursor->page++;
+            cursor->offset = 0;
+        }
+    }
+    if (UNLIKELY(cursor->page >= block->count ||
+            cursor->offset >= block->offsets[cursor->page])) {
+        cursor->id = 0;
+        return false;
+    }
+    cursor->id++;
+    return true;
+}
+
+const char *strings_cursor_string(const struct strings_cursor *cursor) {
+    if (UNLIKELY(!cursor->id)) {
+        return NULL;
+    }
+    const void *page = cursor->strings->strings->pages[cursor->page];
+    return (const char *)((uintptr_t)page + cursor->offset);
+}
+
+uint32_t strings_cursor_id(const struct strings_cursor *cursor) {
+    return cursor->id;
+}

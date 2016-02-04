@@ -33,6 +33,27 @@ int main() {
         assert(string && !strcmp(buffer, string));
     }
 
+    id = 0;
+
+    // test string iteration
+    struct strings_cursor cursor;
+    strings_cursor_init(&cursor, strings);
+
+    assert(!strings_cursor_id(&cursor));
+    assert(!strings_cursor_string(&cursor));
+
+    while (strings_cursor_next(&cursor)) {
+        id = strings_cursor_id(&cursor);
+        string = strings_cursor_string(&cursor);
+        assert(id && string);
+        unsigned_string(buffer + 1, id);
+        assert(!strcmp(buffer, string));
+    }
+    assert(id == count);
+
+    assert(!strings_cursor_id(&cursor));
+    assert(!strings_cursor_string(&cursor));
+
 #ifdef INLINE_UNSIGNED
     // test interning unsigned int strings
     for (unsigned i = 1; i <= count; i++) {
