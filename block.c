@@ -63,7 +63,7 @@ error:
 }
 
 void block_free(struct block *block) {
-    for (int i = 0; i < block->count; i++) {
+    for (size_t i = 0; i < block->count; i++) {
         free_page(block->pages[i]);
     }
     free(block->offsets);

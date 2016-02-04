@@ -122,7 +122,7 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
         return NULL;
     }
 
-    int len = strlen(string);
+    size_t len = strlen(string);
     void *string_ptr = block_alloc(strings->strings, len + 1);
     if (UNLIKELY(!string_ptr)) {
         return NULL;

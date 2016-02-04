@@ -34,7 +34,7 @@ static void unsigned_string(char *dest, uint32_t num)
     while (num >= 100) {
        int pos = num % 100;
        num /= 100;
-       *(uint16_t *)(c - 1) = *(uint16_t *)(digit_pairs + 2 * pos);
+       *(uint16_t *)(c - 1) = *(const uint16_t *)(digit_pairs + 2 * pos);
        c -= 2;
     }
     while (num) {
