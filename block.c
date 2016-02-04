@@ -10,12 +10,8 @@
 
 static inline void *alloc_page()
 {
-    void *ptr = mmap(NULL, BLOCK_PAGE_SIZE, PROT_READ | PROT_WRITE,
-                     MAP_ANON | MAP_PRIVATE, -1, 0);
-    if (!ptr)
-        return NULL;
-    memset(ptr, 0, BLOCK_PAGE_SIZE);
-    return ptr;
+    return mmap(NULL, BLOCK_PAGE_SIZE, PROT_READ | PROT_WRITE,
+                MAP_ANON | MAP_PRIVATE, -1, 0);
 }
 
 static inline void free_page(void *ptr)
@@ -27,7 +23,7 @@ static inline void free_page(void *ptr)
 
 static inline void *alloc_page()
 {
-    return calloc(1, BLOCK_PAGE_SIZE);
+    return malloc(BLOCK_PAGE_SIZE);
 }
 
 static inline void free_page(void *ptr)
