@@ -92,7 +92,7 @@ static void *add_page(struct block *block)
         block->size = new_size;
     }
     void *page = alloc_page();
-    if (!page)
+    if (UNLIKELY(!page))
         return NULL;
     block->pages[block->count] = page;
     block->offsets[block->count] = 0;

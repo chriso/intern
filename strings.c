@@ -162,8 +162,6 @@ static bool strings_intern_collision(struct strings *strings,
                                      uint32_t hash, uint32_t *id)
 {
     for (;;) {
-        if (!strcmp(node->string, string))
-            break;
         if (!node->next) {
             node = node->next = create_node(strings, hash, string);
             if (UNLIKELY(!node))
@@ -171,6 +169,8 @@ static bool strings_intern_collision(struct strings *strings,
             break;
         }
         node = node->next;
+        if (!strcmp(node->string, string))
+            break;
     }
     *id = node->id;
     return true;
@@ -218,7 +218,7 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
     tree_node_t *node = find_node(strings, hash);
     if (node)
         do {
-            if (!strcmp(node->string, string))
+            if (LIKELY(!strcmp(node->string, string)))
                 return node->id;
         } while ((node = node->next));
 
