@@ -254,11 +254,10 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id)
     uint32_t hash = *(const uint32_t *)hash_ptr;
 
     tree_node_t *node = find_node(strings, hash);
-    if (LIKELY(node))
-        do {
-            if (LIKELY(node->id == id))
-                return node->string;
-        } while ((node = node->next));
+    do {
+        if (LIKELY(node->id == id))
+            return node->string;
+    } while ((node = node->next));
 
     return NULL;
 }
