@@ -225,6 +225,16 @@ uint32_t strings_lookup(const struct strings *strings, const char *string)
     return 0;
 }
 
+static const void *get_block_offset(const struct block *block, size_t offset,
+                                    int bytes)
+{
+    size_t allocs_per_page = BLOCK_PAGE_SIZE / bytes;
+    size_t page_num = offset / allocs_per_page;
+    size_t page_offset = offset % allocs_per_page;
+    void *page = block->pages[page_num];
+    return (const void *)((uintptr_t)page + page_offset * bytes);
+}
+
 #ifdef INLINE_UNSIGNED
 const char *strings_lookup_id(struct strings *strings, uint32_t id)
 #else
@@ -242,7 +252,7 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id)
         return NULL;
 
     const void *hash_ptr = \
-        block_get_offset(strings->hashes, id - 1, sizeof(uint32_t));
+        get_block_offset(strings->hashes, id - 1, sizeof(uint32_t));
     uint32_t hash = *(const uint32_t *)hash_ptr;
 
     tree_node_t *node = find_node(strings, hash);

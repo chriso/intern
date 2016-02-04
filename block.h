@@ -2,21 +2,17 @@
 # define BLOCK_PAGE_SIZE 65536
 #endif
 
+#include <stdint.h>
+
 struct block {
     void **pages;
-    int count;
+    uint32_t *offsets;
+    size_t count;
+    size_t size;
 };
 
 struct block *block_new(void);
 
 void block_free(struct block*);
 
-void *block_alloc(struct block*, int bytes);
-
-const void *block_get_page(const struct block*, int page, int *bytes_used);
-
-const void *block_get_offset(const struct block *block, size_t offset,
-                             int bytes);
-
-void block_stats(const struct block *block, size_t *bytes_allocated,
-                 size_t *bytes_used);
+void *block_alloc(struct block*, size_t bytes);
