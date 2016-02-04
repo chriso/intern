@@ -6,6 +6,7 @@
 #include "strings.h"
 #include "block.h"
 #include "tree.h"
+#include "branch.h"
 
 #ifdef INLINE_UNSIGNED
 #include "unsigned.h"
@@ -37,9 +38,6 @@ static uint32_t to_unsigned(const char *string)
     return number;
 }
 #endif
-
-#define LIKELY(cond) __builtin_expect(!!(cond), 1)
-#define UNLIKELY(cond) __builtin_expect(!!(cond), 0)
 
 typedef struct tree_node_s tree_node_t;
 struct tree_node_s {

@@ -3,6 +3,7 @@
 #include <assert.h>
 
 #include "block.h"
+#include "branch.h"
 
 #ifdef BLOCK_MMAP
 #include <sys/mman.h>
@@ -82,7 +83,7 @@ void block_free(struct block *block)
 __attribute__ ((noinline))
 static void *add_page(struct block *block)
 {
-    if (block->count == block->size) {
+    if (UNLIKELY(block->count == block->size)) {
         size_t new_size = block->size * 2;
         void **pages = realloc(block->pages, sizeof(*pages) * new_size);
         if (!pages)
@@ -109,9 +110,9 @@ void *block_alloc(struct block *block, size_t size)
     assert(size <= BLOCK_PAGE_SIZE);
     uint32_t offset = block->offsets[block->count - 1];
     void *page;
-    if (BLOCK_PAGE_SIZE - offset < size) {
+    if (UNLIKELY(BLOCK_PAGE_SIZE - offset < size)) {
         page = add_page(block);
-        if (!page)
+        if (UNLIKELY(!page))
             return NULL;
         offset = 0;
     } else {
