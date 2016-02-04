@@ -1,5 +1,5 @@
 #ifndef BLOCK_PAGE_SIZE
-# define BLOCK_PAGE_SIZE 65536
+# define BLOCK_PAGE_SIZE 4096
 #endif
 
 #include <stddef.h>
