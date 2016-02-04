@@ -121,16 +121,16 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     if (UNLIKELY(!node))
         return NULL;
 
-    uint32_t *hash_ptr = block_alloc(strings->hashes, sizeof(uint32_t));
-    if (UNLIKELY(!hash_ptr))
-        goto error;
-    *hash_ptr = hash;
-
     int len = strlen(string);
     void *string_ptr = block_alloc(strings->strings, len + 1);
     if (UNLIKELY(!string_ptr))
         goto error;
     memcpy(string_ptr, string, len + 1);
+
+    uint32_t *hash_ptr = block_alloc(strings->hashes, sizeof(*hash_ptr));
+    if (UNLIKELY(!hash_ptr))
+        goto error;
+    *hash_ptr = hash;
 
     node->hash = hash;
     node->id = ++strings->total;
@@ -139,6 +139,8 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
 
 #ifdef INLINE_UNSIGNED
     assert(node->id < unsigned_tag);
+#else
+    assert(node->id);
 #endif
 
     return node;

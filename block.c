@@ -89,8 +89,7 @@ static void *add_page(struct block *block)
         if (!pages)
             return NULL;
         block->pages = pages;
-        uint32_t *offsets =
-            realloc(block->offsets, sizeof(*offsets) * new_size);
+        size_t *offsets = realloc(block->offsets, sizeof(*offsets) * new_size);
         if (!offsets)
             return NULL;
         block->offsets = offsets;
@@ -108,7 +107,7 @@ static void *add_page(struct block *block)
 void *block_alloc(struct block *block, size_t size)
 {
     assert(size <= BLOCK_PAGE_SIZE);
-    uint32_t offset = block->offsets[block->count - 1];
+    size_t offset = block->offsets[block->count - 1];
     void *page;
     if (UNLIKELY(BLOCK_PAGE_SIZE - offset < size)) {
         page = add_page(block);

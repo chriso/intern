@@ -2,11 +2,11 @@
 # define BLOCK_PAGE_SIZE 65536
 #endif
 
-#include <stdint.h>
+#include <stddef.h>
 
 struct block {
     void **pages;
-    uint32_t *offsets;
+    size_t *offsets;
     size_t count;
     size_t size;
 };
