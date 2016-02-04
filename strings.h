@@ -33,4 +33,21 @@ uint32_t strings_lookup(const struct strings*, const char *string);
   const char *strings_lookup_id(const struct strings *strings, uint32_t id);
 #endif
 
+struct strings_cursor {
+    const struct strings *strings;
+    size_t page;
+    size_t page_offset;
+};
+
+// Initialize a string cursor
+void strings_cursor_init(struct strings_cursor *, const struct strings *);
+
+// Advance the cursor, e.g. while (strings_cursor_next(&cursor)) { ... }
+bool strings_cursor_next(struct strings_cursor *);
+
+// Select the string/ID that the cursor currently points to, or NULL/0 if
+// the cursor is invalid
+const char *strings_cursor_string(const struct strings_cursor *);
+uint32_t strings_cursor_id(const struct strings_cursor *);
+
 #endif
