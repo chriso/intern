@@ -5,8 +5,7 @@
 #include "strings.h"
 #include "unsigned.h"
 
-static void test_intern()
-{
+int main() {
     struct strings *strings = strings_new();
     assert(strings);
 
@@ -67,10 +66,5 @@ static void test_intern()
 #endif
 
     strings_free(strings);
-}
-
-int main()
-{
-    test_intern();
     return 0;
 }
