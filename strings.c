@@ -125,13 +125,13 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     int len = strlen(string);
     void *string_ptr = block_alloc(strings->strings, len + 1);
     if (UNLIKELY(!string_ptr)) {
-        goto error;
+        return NULL;
     }
     memcpy(string_ptr, string, len + 1);
 
     uint32_t *hash_ptr = block_alloc(strings->hashes, sizeof(*hash_ptr));
     if (UNLIKELY(!hash_ptr)) {
-        goto error;
+        return NULL;
     }
     *hash_ptr = hash;
 
@@ -147,10 +147,6 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
 #endif
 
     return node;
-
-error:
-    free(node);
-    return NULL;
 }
 
 static tree_node_t *find_node(const struct strings *strings, uint32_t hash) {

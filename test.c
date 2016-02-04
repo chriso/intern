@@ -1,8 +1,10 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <assert.h>
 
 #include "strings.h"
+#include "block.h"
 #include "unsigned.h"
 
 int main() {
@@ -64,6 +66,13 @@ int main() {
 #else
     assert(id == count + 4);
 #endif
+
+    char *large_string = malloc(BLOCK_PAGE_SIZE + 1);
+    assert(large_string);
+    memset(large_string, 'x', BLOCK_PAGE_SIZE);
+    large_string[BLOCK_PAGE_SIZE] = '\0';
+    assert(!strings_intern(strings, large_string, &id));
+    free(large_string);
 
     strings_free(strings);
     return 0;

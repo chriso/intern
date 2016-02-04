@@ -1,6 +1,5 @@
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 #include "block.h"
 #include "branch.h"
@@ -77,12 +76,12 @@ static void *add_page(struct block *block) {
     if (UNLIKELY(block->count == block->size)) {
         size_t new_size = block->size * 2;
         void **pages = realloc(block->pages, sizeof(*pages) * new_size);
-        if (!pages) {
+        if (UNLIKELY(!pages)) {
             return NULL;
         }
         block->pages = pages;
         size_t *offsets = realloc(block->offsets, sizeof(*offsets) * new_size);
-        if (!offsets) {
+        if (UNLIKELY(!offsets)) {
             return NULL;
         }
         block->offsets = offsets;
@@ -99,7 +98,9 @@ static void *add_page(struct block *block) {
 }
 
 void *block_alloc(struct block *block, size_t size) {
-    assert(size <= BLOCK_PAGE_SIZE);
+    if (UNLIKELY(size > BLOCK_PAGE_SIZE)) {
+        return NULL;
+    }
     size_t offset = block->offsets[block->count - 1];
     void *page;
     if (UNLIKELY(BLOCK_PAGE_SIZE - offset < size)) {
