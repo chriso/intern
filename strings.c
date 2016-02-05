@@ -379,6 +379,22 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
     return true;
 }
 
+bool strings_frequency_add_all(struct strings_frequency *frequency,
+                               const struct strings *strings) {
+    if (UNLIKELY(frequency->used)) {
+        return false;
+    }
+    if (frequency->size < strings->total &&
+            !resize_counts(frequency, strings->total)) {
+        return false;
+    }
+    frequency->max_id = strings->total;
+    for (uint32_t id = 0; id < strings->total; id++) {
+        frequency->counts[id].count++;
+    }
+    return true;
+}
+
 static int count_comparator(const void *a_, const void *b_) {
     const struct id_count *a = (const struct id_count *)a_;
     const struct id_count *b = (const struct id_count *)b_;

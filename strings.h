@@ -57,6 +57,12 @@ uint32_t strings_cursor_id(const struct strings_cursor*);
 
 struct strings_frequency;
 
+// Create a new, optimized string repository which stores the most frequently
+// seen strings together. The string with the lowest ID (1) is the most
+// frequently seen string
+struct strings *strings_optimize(const struct strings*,
+                                 struct strings_frequency*);
+
 // Create a new string frequency tracker
 struct strings_frequency *strings_frequency_new(void);
 
@@ -69,10 +75,9 @@ void strings_frequency_free(struct strings_frequency*);
 // added after strings_optimize() is called
 bool strings_frequency_add(struct strings_frequency*, uint32_t id);
 
-// Create a new, optimized string repository which stores the most frequently
-// seen strings together. The string with the lowest ID (1) is the most
-// frequently seen string
-struct strings *strings_optimize(const struct strings*,
-                                 struct strings_frequency*);
+// Add all string IDs, to ensure that each string is present in the optimized
+// repository
+bool strings_frequency_add_all(struct strings_frequency*,
+                               const struct strings*);
 
 #endif
