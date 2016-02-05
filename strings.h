@@ -13,9 +13,9 @@ struct strings *strings_new(void);
 void strings_free(struct strings*);
 
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
-// This function returns true if the string was successfully interned. Note
-// that IDs start at 1 and increment to either UINT_MAX or INT_MAX if
-// INLINE_UNSIGNED is defined
+// This function returns true if the string was successfully interned, and
+// false if an error occurred. Note that IDs start at 1 and increment to either
+// UINT_MAX or INT_MAX if INLINE_UNSIGNED is defined
 bool strings_intern(struct strings*, const char *string, uint32_t *id);
 
 // Lookup the ID for a string. This function returns zero if the string
@@ -51,5 +51,24 @@ bool strings_cursor_next(struct strings_cursor *);
 // the cursor is invalid
 const char *strings_cursor_string(const struct strings_cursor *);
 uint32_t strings_cursor_id(const struct strings_cursor *);
+
+struct strings_frequency;
+
+// Create a new string frequency tracker
+struct strings_frequency *strings_frequency_new(void);
+
+// Free the string frequency tracker
+void strings_frequency_free(struct strings_frequency *);
+
+// Add a string ID. This should be called after interning a string and
+// getting back the ID. This function returns true if the string ID was
+// tracked, and false if an error occurred
+bool strings_frequency_add(struct strings_frequency *, uint32_t id);
+
+// Create a new, optimized string repository which stores the most frequently
+// seen strings together. The string with the lowest ID (1) is the most
+// frequently seen string
+struct strings *strings_optimize(const struct strings *,
+                                 struct strings_frequency *);
 
 #endif
