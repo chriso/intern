@@ -371,7 +371,6 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
         frequency->max_id = id;
     }
     struct id_count *id_count = &frequency->counts[id - 1];
-    id_count->id = id;
     id_count->count++;
     return true;
 }
@@ -387,6 +386,10 @@ struct strings *strings_optimize(const struct strings *strings,
     struct strings *optimized = strings_new();
     if (!optimized) {
         return NULL;
+    }
+
+    for (uint32_t i = 0; i < frequency->max_id; i++) {
+        frequency->counts[i].id = i + 1;
     }
 
     frequency->used = true;
