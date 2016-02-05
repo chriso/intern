@@ -95,6 +95,27 @@ int main() {
     assert(!strings_intern(strings, large_string, &id));
     free(large_string);
 
+    struct strings *optimized;
+    struct strings_frequency *freq = strings_frequency_new();
+    assert(freq);
+
+    assert(strings_frequency_add(freq, 3));
+    assert(strings_frequency_add(freq, 3));
+    assert(strings_frequency_add(freq, 3));
+    assert(strings_frequency_add(freq, 2));
+    assert(strings_frequency_add(freq, 2));
+    assert(strings_frequency_add(freq, 5));
+
+    optimized = strings_optimize(strings, freq);
+    assert(optimized);
+
+    assert(strings_lookup(optimized, "x3") == 1);
+    assert(strings_lookup(optimized, "x2") == 2);
+    assert(strings_lookup(optimized, "x5") == 3);
+
+    strings_frequency_free(freq);
+    strings_free(optimized);
+
     strings_free(strings);
     return 0;
 }
