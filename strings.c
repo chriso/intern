@@ -374,8 +374,7 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
         }
         frequency->max_id = id;
     }
-    struct id_count *id_count = &frequency->counts[id - 1];
-    id_count->count++;
+    frequency->counts[id - 1].count++;
     return true;
 }
 
