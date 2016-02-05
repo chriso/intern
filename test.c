@@ -23,6 +23,7 @@ int main() {
         assert(strings_intern(strings, buffer, &id));
         assert(id == i);
     }
+    assert(strings_count(strings) == count);
 
     // test idempotency
     for (unsigned i = 1; i <= count; i++) {
@@ -30,6 +31,7 @@ int main() {
         assert(strings_intern(strings, buffer, &id));
         assert(id == i);
     }
+    assert(strings_count(strings) == count);
 
     // test looking up ids
     for (unsigned i = 1; i <= count; i++) {
@@ -44,8 +46,6 @@ int main() {
         assert(strings_lookup(strings, buffer) == i);
     }
 
-    id = 0;
-
     // test iterating strings
     struct strings_cursor cursor;
     strings_cursor_init(&cursor, strings);
@@ -53,6 +53,7 @@ int main() {
     assert(!strings_cursor_id(&cursor));
     assert(!strings_cursor_string(&cursor));
 
+    id = 0;
     while (strings_cursor_next(&cursor)) {
         id = strings_cursor_id(&cursor);
         string = strings_cursor_string(&cursor);
@@ -121,6 +122,7 @@ int main() {
 
     optimized = strings_optimize(strings, freq);
     assert(optimized);
+    assert(strings_count(optimized) == 3);
 
     assert(strings_lookup(optimized, "x3") == 1);
     assert(strings_lookup(optimized, "x2") == 2);

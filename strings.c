@@ -176,6 +176,10 @@ static bool strings_intern_collision(struct strings *strings,
     return true;
 }
 
+uint32_t strings_count(const struct strings *strings) {
+    return strings->total;
+}
+
 bool strings_intern(struct strings *strings, const char *string,
                     uint32_t *id) {
 #ifdef INLINE_UNSIGNED

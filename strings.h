@@ -12,6 +12,9 @@ struct strings *strings_new(void);
 // Free the string repository
 void strings_free(struct strings*);
 
+// Count the number of unique strings in the repository
+uint32_t strings_count(const struct strings*);
+
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
 // This function returns true if the string was successfully interned, and
 // false if an error occurred. Note that IDs start at 1 and increment to either
@@ -29,9 +32,9 @@ uint32_t strings_lookup(const struct strings*, const char *string);
 // is written into an internal buffer which persists until the function is
 // called again
 #ifdef INLINE_UNSIGNED
-  const char *strings_lookup_id(struct strings *strings, uint32_t id);
+  const char *strings_lookup_id(struct strings*, uint32_t id);
 #else
-  const char *strings_lookup_id(const struct strings *strings, uint32_t id);
+  const char *strings_lookup_id(const struct strings*, uint32_t id);
 #endif
 
 struct strings_cursor {
@@ -42,15 +45,15 @@ struct strings_cursor {
 };
 
 // Initialize a string cursor
-void strings_cursor_init(struct strings_cursor *, const struct strings *);
+void strings_cursor_init(struct strings_cursor*, const struct strings*);
 
 // Advance the cursor, e.g. while (strings_cursor_next(&cursor)) { ... }.
-bool strings_cursor_next(struct strings_cursor *);
+bool strings_cursor_next(struct strings_cursor*);
 
 // Select the string/ID that the cursor currently points to, or NULL/0 if
 // the cursor is invalid
-const char *strings_cursor_string(const struct strings_cursor *);
-uint32_t strings_cursor_id(const struct strings_cursor *);
+const char *strings_cursor_string(const struct strings_cursor*);
+uint32_t strings_cursor_id(const struct strings_cursor*);
 
 struct strings_frequency;
 
@@ -58,17 +61,17 @@ struct strings_frequency;
 struct strings_frequency *strings_frequency_new(void);
 
 // Free the string frequency tracker
-void strings_frequency_free(struct strings_frequency *);
+void strings_frequency_free(struct strings_frequency*);
 
 // Add a string ID. This should be called after interning a string and
 // getting back the ID. This function returns true if the string ID was
 // tracked, and false if an error occurred
-bool strings_frequency_add(struct strings_frequency *, uint32_t id);
+bool strings_frequency_add(struct strings_frequency*, uint32_t id);
 
 // Create a new, optimized string repository which stores the most frequently
 // seen strings together. The string with the lowest ID (1) is the most
 // frequently seen string
-struct strings *strings_optimize(const struct strings *,
-                                 struct strings_frequency *);
+struct strings *strings_optimize(const struct strings*,
+                                 struct strings_frequency*);
 
 #endif
