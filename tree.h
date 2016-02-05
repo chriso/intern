@@ -75,7 +75,7 @@ a_prefix##new(a_rbt_type *rbtree) {					\
     rb_new(a_type, a_field, rbtree);					\
 }									\
 a_attr a_type *								\
-a_prefix##search(a_rbt_type *rbtree, a_type *key) {			\
+a_prefix##search(const a_rbt_type *rbtree, a_type *key) {		\
     a_type *ret;							\
     int cmp;								\
     ret = rbtree->rbt_root;						\

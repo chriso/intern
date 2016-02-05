@@ -111,7 +111,7 @@ static uint32_t strings_hash(const char *string) {
     uint32_t hash = 5381;
     char c;
     while ((c = *string++)) {
-        hash = ((hash << 5) + hash) + c;
+        hash = ((hash << 5) + hash) + (uint32_t)c;
     }
     return hash;
 }
@@ -151,8 +151,9 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
 }
 
 static tree_node_t *find_node(const struct strings *strings, uint32_t hash) {
-    tree_node_t key = {hash};
-    return tree_search((tree_t *)&strings->hash_map, &key);
+    tree_node_t key;
+    key.hash = hash;
+    return tree_search(&strings->hash_map, &key);
 }
 
 __attribute__ ((noinline))
