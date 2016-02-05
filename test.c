@@ -20,22 +20,33 @@ int main() {
     // test interning strings
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer + 1, i);
-
         assert(strings_intern(strings, buffer, &id));
         assert(id == i);
+    }
 
+    // test idempotency
+    for (unsigned i = 1; i <= count; i++) {
+        unsigned_string(buffer + 1, i);
         assert(strings_intern(strings, buffer, &id));
         assert(id == i);
+    }
 
-        assert(strings_lookup(strings, buffer) == id);
-
-        string = strings_lookup_id(strings, id);
+    // test looking up ids
+    for (unsigned i = 1; i <= count; i++) {
+        unsigned_string(buffer + 1, i);
+        string = strings_lookup_id(strings, i);
         assert(string && !strcmp(buffer, string));
+    }
+
+    // test looking up strings
+    for (unsigned i = 1; i <= count; i++) {
+        unsigned_string(buffer + 1, i);
+        assert(strings_lookup(strings, buffer) == i);
     }
 
     id = 0;
 
-    // test string iteration
+    // test iterating strings
     struct strings_cursor cursor;
     strings_cursor_init(&cursor, strings);
 
@@ -88,6 +99,7 @@ int main() {
     assert(id == count + 4);
 #endif
 
+    // test strings larger than the page size
     char *large_string = malloc(BLOCK_PAGE_SIZE + 1);
     assert(large_string);
     memset(large_string, 'x', BLOCK_PAGE_SIZE);
@@ -95,6 +107,7 @@ int main() {
     assert(!strings_intern(strings, large_string, &id));
     free(large_string);
 
+    // test optimizing strings
     struct strings *optimized;
     struct strings_frequency *freq = strings_frequency_new();
     assert(freq);
