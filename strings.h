@@ -14,7 +14,8 @@ void strings_free(struct strings*);
 
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
 // This function returns true if the string was successfully interned. Note
-// that IDs start at 1 and increment towards UINT_MAX
+// that IDs start at 1 and increment to either UINT_MAX or INT_MAX if
+// INLINE_UNSIGNED is defined
 bool strings_intern(struct strings*, const char *string, uint32_t *id);
 
 // Lookup the ID for a string. This function returns zero if the string
