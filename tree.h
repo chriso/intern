@@ -53,6 +53,7 @@ struct {								\
 
 #define	rb_new(a_type, a_field, a_rbt) do {				\
     (a_rbt)->rbt_root = &(a_rbt)->rbt_nil;				\
+    (a_rbt)->rbt_nil.a_field.rbn_right_red = 0;                         \
     rbt_node_new(a_type, a_field, a_rbt, &(a_rbt)->rbt_nil);		\
     rbtn_black_set(a_type, a_field, &(a_rbt)->rbt_nil);			\
 } while (0)
@@ -155,4 +156,4 @@ a_prefix##insert(a_rbt_type *rbtree, a_type *node) {			\
     }									\
     rbtree->rbt_root = path->node;					\
     rbtn_black_set(a_type, a_field, rbtree->rbt_root);			\
-}									\
+}
