@@ -4,6 +4,7 @@
 #include <assert.h>
 
 #include "intern.h"
+#include "optimize.h"
 #include "unsigned.h"
 
 int main() {
