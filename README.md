@@ -9,4 +9,8 @@
 - Fast: intern many millions of strings per second
 - String repository optimization based on frequency analysis (improve locality)
 
-See [intern.h](https://github.com/chriso/intern.c/blob/master/intern.h) for usage.
+See [intern.h][intern.h] and [optimize.h][optimize.h] for usage.
+
+
+[intern.h]: https://github.com/chriso/intern.c/blob/master/intern.h
+[optimize.h]: https://github.com/chriso/intern.c/blob/master/optimize.h
