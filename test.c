@@ -98,6 +98,14 @@ int main() {
     assert(optimized);
     assert(strings_count(optimized) == count);
     assert(strings_lookup(optimized, "x5") == 1);
+    strings_free(optimized);
+    assert(strings_frequency_add(freq, 3));
+    assert(strings_frequency_add(freq, 3));
+    optimized = strings_optimize(strings, freq);
+    assert(optimized);
+    assert(strings_count(optimized) == count);
+    assert(strings_lookup(optimized, "x3") == 1);
+    assert(strings_lookup(optimized, "x5") == 2);
     strings_frequency_free(freq);
     strings_free(optimized);
 

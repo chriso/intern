@@ -315,7 +315,7 @@ struct strings_frequency {
     struct id_count *counts;
     size_t size;
     uint32_t max_id;
-    bool used;
+    bool sorted_by_count;
 };
 
 struct strings_frequency *strings_frequency_new() {
@@ -331,7 +331,7 @@ struct strings_frequency *strings_frequency_new() {
     frequency->counts[0].count = 0;
     frequency->max_id = 0;
     frequency->size = 1;
-    frequency->used = false;
+    frequency->sorted_by_count = false;
     return frequency;
 }
 
@@ -359,14 +359,41 @@ static bool resize_counts(struct strings_frequency *frequency,
     return true;
 }
 
+static int count_comparator(const void *a_, const void *b_) {
+    const struct id_count *a = (const struct id_count *)a_;
+    const struct id_count *b = (const struct id_count *)b_;
+    return b->count > a->count ? 1 : (a->count > b->count ? -1 : 0);
+}
+
+static int id_comparator(const void *a_, const void *b_) {
+    const struct id_count *a = (const struct id_count *)a_;
+    const struct id_count *b = (const struct id_count *)b_;
+    return b->id > a->id ? -1 : (a->id > b->id ? 1 : 0);
+}
+
+static void sort_by_count(struct strings_frequency *frequency) {
+    frequency->sorted_by_count = true;
+    qsort(frequency->counts, frequency->max_id, sizeof(struct id_count),
+          count_comparator);
+}
+
+static void sort_by_id(struct strings_frequency *frequency) {
+    frequency->sorted_by_count = false;
+    qsort(frequency->counts, frequency->max_id, sizeof(struct id_count),
+          id_comparator);
+}
+
 bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
 #ifdef INLINE_UNSIGNED
     if (id > unsigned_tag) {
         return true;
     }
 #endif
-    if (UNLIKELY(!id || frequency->used)) {
+    if (UNLIKELY(!id)) {
         return false;
+    }
+    if (UNLIKELY(frequency->sorted_by_count)) {
+        sort_by_id(frequency);
     }
     if (frequency->max_id < id) {
         if (UNLIKELY(frequency->size < id)) {
@@ -382,8 +409,8 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
 
 bool strings_frequency_add_all(struct strings_frequency *frequency,
                                const struct strings *strings) {
-    if (UNLIKELY(frequency->used)) {
-        return false;
+    if (frequency->sorted_by_count) {
+        sort_by_id(frequency);
     }
     if (frequency->size < strings->total &&
             !resize_counts(frequency, strings->total)) {
@@ -396,12 +423,6 @@ bool strings_frequency_add_all(struct strings_frequency *frequency,
     return true;
 }
 
-static int count_comparator(const void *a_, const void *b_) {
-    const struct id_count *a = (const struct id_count *)a_;
-    const struct id_count *b = (const struct id_count *)b_;
-    return b->count > a->count ? 1 : (a->count > b->count ? -1 : 0);
-}
-
 struct strings *strings_optimize(const struct strings *strings,
                                  struct strings_frequency *frequency) {
     struct strings *optimized = strings_new();
@@ -409,13 +430,12 @@ struct strings *strings_optimize(const struct strings *strings,
         return NULL;
     }
 
-    for (uint32_t i = 0; i < frequency->max_id; i++) {
-        frequency->counts[i].id = i + 1;
+    if (!frequency->sorted_by_count) {
+        for (uint32_t i = 0; i < frequency->max_id; i++) {
+            frequency->counts[i].id = i + 1;
+        }
+        sort_by_count(frequency);
     }
-
-    frequency->used = true;
-    qsort(frequency->counts, frequency->max_id, sizeof(struct id_count),
-          count_comparator);
 
     for (uint32_t i = 0; i < frequency->max_id; i++) {
         const struct id_count *id_count = &frequency->counts[i];
