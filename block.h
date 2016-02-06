@@ -1,17 +1,14 @@
-#ifndef BLOCK_PAGE_SIZE
-# define BLOCK_PAGE_SIZE 4096
-#endif
-
 #include <stddef.h>
 
 struct block {
+    size_t page_size;
     void **pages;
     size_t *offsets;
     size_t count;
     size_t size;
 };
 
-struct block *block_new(void);
+struct block *block_new(size_t page_size);
 
 void block_free(struct block*);
 

@@ -76,9 +76,9 @@ struct strings *strings_new() {
         return NULL;
     }
 
-    strings->hashes = block_new();
-    strings->strings = block_new();
-    strings->tree_nodes = block_new();
+    strings->hashes = block_new(PAGE_SIZE);
+    strings->strings = block_new(PAGE_SIZE);
+    strings->tree_nodes = block_new(PAGE_SIZE);
     if (!strings->hashes || !strings->strings || !strings->tree_nodes) {
         goto error;
     }
@@ -249,7 +249,7 @@ const char *strings_lookup_id(const struct strings *strings, uint32_t id) {
         return NULL;
     }
 
-    size_t hashes_per_page = BLOCK_PAGE_SIZE / sizeof(uint32_t);
+    size_t hashes_per_page = PAGE_SIZE / sizeof(uint32_t);
     size_t offset = (size_t)(id - 1);
     size_t page_num = offset / hashes_per_page;
     size_t page_offset = offset % hashes_per_page;

@@ -4,12 +4,12 @@ ifeq ($(inline_unsigned), 1)
  CFLAGS += -DINLINE_UNSIGNED
 endif
 
-ifeq ($(mmap), 1)
- CFLAGS += -DBLOCK_MMAP
+ifeq ($(page_mmap), 1)
+ CFLAGS += -DPAGE_MMAP
 endif
 
 ifdef page_size
- CFLAGS += -DBLOCK_PAGE_SIZE=$(page_size)
+ CFLAGS += -DPAGE_SIZE=$(page_size)
 endif
 
 ifdef optimize

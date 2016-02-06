@@ -5,11 +5,15 @@
 #include "branch.h"
 #include "page.h"
 
-struct block *block_new() {
+struct block *block_new(size_t page_size) {
+    if (!page_size) {
+        return NULL;
+    }
     struct block *block = malloc(sizeof(*block));
     if (!block) {
         return NULL;
     }
+    block->page_size = page_size;
 
     block->pages = malloc(sizeof(*block->pages));
     block->offsets = malloc(sizeof(*block->offsets));
@@ -17,7 +21,7 @@ struct block *block_new() {
         goto error;
     }
 
-    block->pages[0] = page_alloc(BLOCK_PAGE_SIZE);
+    block->pages[0] = page_alloc(block->page_size);
     if (!block->pages[0]) {
         goto error;
     }
@@ -41,7 +45,7 @@ error:
 
 void block_free(struct block *block) {
     for (size_t i = 0; i < block->count; i++) {
-        page_free(block->pages[i], BLOCK_PAGE_SIZE);
+        page_free(block->pages[i], block->page_size);
     }
     free(block->offsets);
     free(block->pages);
@@ -64,7 +68,7 @@ static void *add_page(struct block *block) {
         block->offsets = offsets;
         block->size = new_size;
     }
-    void *page = page_alloc(BLOCK_PAGE_SIZE);
+    void *page = page_alloc(block->page_size);
     if (UNLIKELY(!page)) {
         return NULL;
     }
@@ -75,12 +79,12 @@ static void *add_page(struct block *block) {
 }
 
 void *block_alloc(struct block *block, size_t size) {
-    if (UNLIKELY(size > BLOCK_PAGE_SIZE)) {
+    if (UNLIKELY(size > block->page_size)) {
         return NULL;
     }
     size_t offset = block->offsets[block->count - 1];
     void *page;
-    if (UNLIKELY(BLOCK_PAGE_SIZE - offset < size)) {
+    if (UNLIKELY(block->page_size - offset < size)) {
         page = add_page(block);
         if (UNLIKELY(!page)) {
             return NULL;

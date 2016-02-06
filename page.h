@@ -1,4 +1,4 @@
-#ifdef BLOCK_MMAP
+#ifdef PAGE_MMAP
 #include <sys/mman.h>
 
 static inline void *page_alloc(size_t page_size) {
