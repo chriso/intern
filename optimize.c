@@ -141,8 +141,7 @@ struct strings *strings_optimize(const struct strings *strings,
             break;
         }
         const char *string = strings_lookup_id(strings, id_count->id);
-        uint32_t new_id;
-        if (UNLIKELY(!string || !strings_intern(optimized, string, &new_id))) {
+        if (UNLIKELY(!string || !strings_intern(optimized, string))) {
             goto error;
         }
     }

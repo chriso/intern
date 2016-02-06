@@ -158,12 +158,12 @@ static tree_node_t *find_node(const struct strings *strings, uint32_t hash) {
 __attribute__ ((noinline))
 static bool strings_intern_collision(struct strings *strings,
                                      tree_node_t *node, const char *string,
-                                     uint32_t hash, uint32_t *id) {
+                                     uint32_t hash) {
     for (;;) {
         if (!node->next) {
             node = node->next = create_node(strings, hash, string);
             if (UNLIKELY(!node)) {
-                return false;
+                return 0;
             }
             break;
         }
@@ -172,22 +172,19 @@ static bool strings_intern_collision(struct strings *strings,
             break;
         }
     }
-    *id = node->id;
-    return true;
+    return node->id;
 }
 
 uint32_t strings_count(const struct strings *strings) {
     return strings->total;
 }
 
-bool strings_intern(struct strings *strings, const char *string,
-                    uint32_t *id) {
+uint32_t strings_intern(struct strings *strings, const char *string) {
 #ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
         if (LIKELY(number < unsigned_tag)) {
-            *id = number | unsigned_tag;
-            return true;
+            return number | unsigned_tag;
         }
     }
 #endif
@@ -196,18 +193,16 @@ bool strings_intern(struct strings *strings, const char *string,
     tree_node_t *node = find_node(strings, hash);
     if (node) {
         if (UNLIKELY(strcmp(node->string, string))) {
-            return strings_intern_collision(strings, node, string, hash, id);
+            return strings_intern_collision(strings, node, string, hash);
         }
     } else {
         if (UNLIKELY(!(node = create_node(strings, hash, string)))) {
-            return false;
+            return 0;
         }
         tree_insert(&strings->hash_map, node);
     }
 
-    *id = node->id;
-
-    return true;
+    return node->id;
 }
 
 uint32_t strings_lookup(const struct strings *strings, const char *string) {

@@ -21,10 +21,9 @@ void strings_free(struct strings*);
 uint32_t strings_count(const struct strings*);
 
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
-// This function returns true if the string was successfully interned, and
-// false if an error occurred. Note that IDs start at 1 and increment to either
-// UINT_MAX or INT_MAX if INLINE_UNSIGNED is defined
-bool strings_intern(struct strings*, const char *string, uint32_t *id);
+// Note that IDs start at 1 and increment to either UINT_MAX or INT_MAX if
+// INLINE_UNSIGNED is defined. This function returns 0 if an error occurred
+uint32_t strings_intern(struct strings*, const char *string);
 
 // Lookup the ID for a string. This function returns zero if the string
 // does not exist in the repository

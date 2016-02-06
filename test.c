@@ -13,23 +13,20 @@ int main() {
 
     char buffer[12] = {'x'};
     const char *string;
-    uint32_t id;
 
     unsigned count = 1000000;
 
     // test interning strings
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer + 1, i);
-        assert(strings_intern(strings, buffer, &id));
-        assert(id == i);
+        assert(strings_intern(strings, buffer) == i);
     }
     assert(strings_count(strings) == count);
 
     // test idempotency
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer + 1, i);
-        assert(strings_intern(strings, buffer, &id));
-        assert(id == i);
+        assert(strings_intern(strings, buffer) == i);
     }
     assert(strings_count(strings) == count);
 
@@ -53,7 +50,7 @@ int main() {
     assert(!strings_cursor_id(&cursor));
     assert(!strings_cursor_string(&cursor));
 
-    id = 0;
+    uint32_t id = 0;
     while (strings_cursor_next(&cursor)) {
         id = strings_cursor_id(&cursor);
         string = strings_cursor_string(&cursor);
@@ -114,11 +111,8 @@ int main() {
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer, i);
 
-        assert(strings_intern(strings, buffer, &id));
-        assert(i == (id & 0x7FFFFFFF));
-
-        assert(strings_intern(strings, buffer, &id));
-        assert(i == (id & 0x7FFFFFFF));
+        assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
+        assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
 
         assert(strings_lookup(strings, buffer) == id);
 
@@ -127,28 +121,25 @@ int main() {
     }
 #endif
 
-    assert(strings_intern(strings, "2147483648", &id));
-    assert(id == count + 1);
+    assert(strings_intern(strings, "2147483648") == count + 1);
 
-    assert(strings_intern(strings, "4294967295", &id));
-    assert(id == count + 2);
+    assert(strings_intern(strings, "4294967295") == count + 2);
 
-    assert(strings_intern(strings, "4294967296", &id));
-    assert(id == count + 3);
+    assert(strings_intern(strings, "4294967296") == count + 3);
 
-    assert(strings_intern(strings, "2147483647", &id));
 #ifdef INLINE_UNSIGNED
-    assert(id == 0xFFFFFFFF);
+    uint32_t expected = UINT_MAX;
 #else
-    assert(id == count + 4);
+    uint32_t expected = count + 4;
 #endif
+    assert(strings_intern(strings, "2147483647") == expected);
 
     // test strings larger than the page size
     char *large_string = malloc(PAGE_SIZE + 1);
     assert(large_string);
     memset(large_string, 'x', PAGE_SIZE);
     large_string[PAGE_SIZE] = '\0';
-    assert(!strings_intern(strings, large_string, &id));
+    assert(!strings_intern(strings, large_string));
     free(large_string);
 
     strings_free(strings);
