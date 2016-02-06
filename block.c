@@ -3,30 +3,7 @@
 
 #include "block.h"
 #include "branch.h"
-
-#ifdef BLOCK_MMAP
-#include <sys/mman.h>
-
-static inline void *alloc_page() {
-    return mmap(NULL, BLOCK_PAGE_SIZE, PROT_READ | PROT_WRITE,
-                MAP_ANON | MAP_PRIVATE, -1, 0);
-}
-
-static inline void free_page(void *ptr) {
-    munmap(ptr, BLOCK_PAGE_SIZE);
-}
-
-#else
-
-static inline void *alloc_page() {
-    return malloc(BLOCK_PAGE_SIZE);
-}
-
-static inline void free_page(void *ptr) {
-    free(ptr);
-}
-
-#endif
+#include "page.h"
 
 struct block *block_new() {
     struct block *block = malloc(sizeof(*block));
@@ -40,7 +17,7 @@ struct block *block_new() {
         goto error;
     }
 
-    block->pages[0] = alloc_page();
+    block->pages[0] = page_alloc(BLOCK_PAGE_SIZE);
     if (!block->pages[0]) {
         goto error;
     }
@@ -64,7 +41,7 @@ error:
 
 void block_free(struct block *block) {
     for (size_t i = 0; i < block->count; i++) {
-        free_page(block->pages[i]);
+        page_free(block->pages[i], BLOCK_PAGE_SIZE);
     }
     free(block->offsets);
     free(block->pages);
@@ -87,7 +64,7 @@ static void *add_page(struct block *block) {
         block->offsets = offsets;
         block->size = new_size;
     }
-    void *page = alloc_page();
+    void *page = page_alloc(BLOCK_PAGE_SIZE);
     if (UNLIKELY(!page)) {
         return NULL;
     }
