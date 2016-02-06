@@ -14,6 +14,8 @@ endif
 
 ifdef optimize
  CFLAGS += -O$(optimize)
+else
+ CFLAGS += -Os
 endif
 
 tests: test.o block.o strings.o
