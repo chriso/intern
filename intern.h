@@ -76,12 +76,12 @@ void strings_frequency_free(struct strings_frequency*);
 
 // Add a string ID. This should be called after interning a string and
 // getting back the ID. This function returns true if the string ID was
-// tracked, and false if an error occurred. Note that no more strings can be
-// added after strings_optimize() is called
+// tracked, and false if an error occurred
 bool strings_frequency_add(struct strings_frequency*, uint32_t id);
 
 // Add all string IDs, to ensure that each string is present in the optimized
-// repository
+// repository. This function returns true if all strings were tracked, and
+// false if an error occurred
 bool strings_frequency_add_all(struct strings_frequency*,
                                const struct strings*);
 
