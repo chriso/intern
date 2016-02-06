@@ -4,7 +4,6 @@
 #include <assert.h>
 
 #include "intern.h"
-#include "block.h"
 #include "unsigned.h"
 
 int main() {

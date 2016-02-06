@@ -2,8 +2,8 @@
 #define INTERN_H_
 
 #include <stdint.h>
-#include <stdbool.h>
-#include <stddef.h>
+
+#include "block.h"
 
 #ifndef PAGE_SIZE
 # define PAGE_SIZE 4096
@@ -14,7 +14,7 @@ struct strings;
 // Create a new repository of strings
 struct strings *strings_new(void);
 
-// Free the string repository
+// Free a string repository
 void strings_free(struct strings*);
 
 // Count the number of unique strings in the repository

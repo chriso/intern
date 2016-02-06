@@ -4,7 +4,6 @@
 #include <stdio.h>
 
 #include "intern.h"
-#include "block.h"
 #include "tree.h"
 #include "branch.h"
 
