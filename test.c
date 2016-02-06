@@ -3,7 +3,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "strings.h"
+#include "intern.h"
 #include "block.h"
 #include "unsigned.h"
 

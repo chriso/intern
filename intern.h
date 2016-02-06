@@ -1,8 +1,9 @@
-#ifndef INTERN_STRINGS_H_
-#define INTERN_STRINGS_H_
+#ifndef INTERN_H_
+#define INTERN_H_
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <stddef.h>
 
 #ifndef PAGE_SIZE
 # define PAGE_SIZE 4096

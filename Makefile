@@ -18,13 +18,16 @@ else
  CFLAGS += -Os
 endif
 
-tests: test.o block.o strings.o
+libintern.a: intern.o block.o
+	$(AR) rs $@ $^
+
+tests: test.o libintern.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
 check: tests
 	@./tests
 
 clean:
-	rm -f tests *.o
+	rm -f tests *.o *.a
 
 .PHONY: clean
