@@ -2,7 +2,6 @@
 #include <string.h>
 #include <limits.h>
 #include <stdio.h>
-#include <assert.h>
 
 #include "strings.h"
 #include "block.h"
@@ -13,6 +12,7 @@
 #include "unsigned.h"
 
 const static uint32_t unsigned_tag = 0x80000000;
+const static uint32_t id_overflow = unsigned_tag;
 
 static int is_small_unsigned(const char *string) {
     char c;
@@ -37,6 +37,9 @@ static uint32_t to_unsigned(const char *string) {
     }
     return number;
 }
+
+#else
+const static uint32_t id_overflow = 0;
 #endif
 
 typedef struct tree_node_s tree_node_t;
@@ -122,6 +125,12 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     if (UNLIKELY(!node)) {
         return NULL;
     }
+    node->hash = hash;
+    node->next = NULL;
+    node->id = strings->total + 1;
+    if (UNLIKELY(node->id == id_overflow)) {
+        return NULL;
+    }
 
     size_t len = strlen(string);
     void *string_ptr = block_alloc(strings->strings, len + 1);
@@ -129,6 +138,7 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
         return NULL;
     }
     memcpy(string_ptr, string, len + 1);
+    node->string = (const char *)string_ptr;
 
     uint32_t *hash_ptr = block_alloc(strings->hashes, sizeof(*hash_ptr));
     if (UNLIKELY(!hash_ptr)) {
@@ -136,16 +146,7 @@ static tree_node_t *create_node(struct strings *strings, uint32_t hash,
     }
     *hash_ptr = hash;
 
-    node->hash = hash;
-    node->id = ++strings->total;
-    node->string = (const char *)string_ptr;
-    node->next = NULL;
-
-#ifdef INLINE_UNSIGNED
-    assert(node->id < unsigned_tag);
-#else
-    assert(node->id);
-#endif
+    strings->total++;
 
     return node;
 }

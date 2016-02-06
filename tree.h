@@ -1,5 +1,7 @@
 /* (c) http://www.canonware.com/jemalloc/ */
 
+#include <assert.h>
+
 #define	rb_node(a_type)							\
 struct {								\
     a_type *rbn_left;							\
