@@ -1,4 +1,5 @@
-/* (c) http://www.canonware.com/jemalloc/ */
+// Left-leaning red-black tree
+// (c) Jason Evans - http://www.canonware.com/rb/
 
 #include <assert.h>
 
