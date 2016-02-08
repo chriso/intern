@@ -59,4 +59,20 @@ bool strings_cursor_next(struct strings_cursor*);
 const char *strings_cursor_string(const struct strings_cursor*);
 uint32_t strings_cursor_id(const struct strings_cursor*);
 
+struct strings_snapshot {
+    struct block_snapshot strings;
+    struct block_snapshot hashes;
+    struct block_snapshot tree_nodes;
+    uint32_t total;
+};
+
+// Create a snapshot. The string repository can later be restored to this
+// position
+void strings_snapshot(const struct strings*, struct strings_snapshot*);
+
+// Restore the string repository to a previous position. Any strings added
+// after the snapshot are removed. This function returns true if the restore
+// was successful, and false if an error occurred
+bool strings_restore(struct strings*, const struct strings_snapshot*);
+
 #endif

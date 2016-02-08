@@ -298,3 +298,40 @@ const char *strings_cursor_string(const struct strings_cursor *cursor) {
 uint32_t strings_cursor_id(const struct strings_cursor *cursor) {
     return cursor->id;
 }
+
+void strings_snapshot(const struct strings *strings,
+                      struct strings_snapshot *snapshot) {
+    block_snapshot(strings->strings, &snapshot->strings);
+    block_snapshot(strings->hashes, &snapshot->hashes);
+    block_snapshot(strings->tree_nodes, &snapshot->tree_nodes);
+    snapshot->total = strings->total;
+}
+
+bool strings_restore(struct strings *strings,
+                     const struct strings_snapshot *snapshot) {
+    if (!block_restore(strings->strings, &snapshot->strings) ||
+            !block_restore(strings->hashes, &snapshot->hashes) ||
+            !block_restore(strings->tree_nodes, &snapshot->tree_nodes)) {
+        return false;
+    }
+    strings->total = snapshot->total;
+    tree_new(&strings->hash_map);
+    struct block *block = strings->tree_nodes;
+    tree_node_t *node, *existing;
+    for (size_t page = 0; page < block->count; page++) {
+        for (size_t offset = 0; offset < block->offsets[page];
+                offset += sizeof(tree_node_t)) {
+            node = (tree_node_t *)((uintptr_t)block->pages[page] + offset);
+            existing = find_node(strings, node->hash);
+            if (UNLIKELY(existing)) {
+                while (existing->next) {
+                    existing = existing->next;
+                }
+                existing->next = node;
+            } else {
+                tree_insert(&strings->hash_map, node);
+            }
+        }
+    }
+    return true;
+}

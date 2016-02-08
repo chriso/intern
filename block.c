@@ -119,8 +119,3 @@ bool block_restore(struct block *block,
     block->offsets[snapshot->count - 1] = snapshot->offset;
     return true;
 }
-
-void block_reset(struct block *block) {
-    struct block_snapshot pristine = {1, 0};
-    block_restore(block, &pristine);
-}

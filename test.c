@@ -128,5 +128,36 @@ int main() {
     free(large_string);
 
     strings_free(strings);
+
+    // test snapshots
+    strings = strings_new();
+    assert(strings);
+    assert(!strings_count(strings));
+    struct strings_snapshot middle_snapshot, end_snapshot;
+    for (unsigned i = 1; i <= count; i++) {
+        unsigned_string(buffer + 1, i);
+        assert(strings_intern(strings, buffer) == i);
+        if (i == count / 2) {
+            strings_snapshot(strings, &middle_snapshot);
+        }
+    }
+    strings_snapshot(strings, &end_snapshot);
+    assert(strings_count(strings) == count);
+    assert(strings_restore(strings, &end_snapshot));
+    assert(strings_count(strings) == count);
+    assert(strings_restore(strings, &middle_snapshot));
+    assert(strings_count(strings) == count / 2);
+    assert(!strings_restore(strings, &end_snapshot));
+    for (unsigned i = 1; i <= count / 2; i++) {
+        unsigned_string(buffer + 1, i);
+        assert(strings_lookup(strings, buffer) == i);
+    }
+    for (unsigned i = count / 2 + 1; i <= count; i++) {
+        unsigned_string(buffer + 1, i);
+        assert(!strings_lookup(strings, buffer));
+    }
+    assert(strings_intern(strings, "foobar") == count / 2 + 1);
+
+    strings_free(strings);
     return 0;
 }

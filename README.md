@@ -8,6 +8,7 @@
 - Minimal total overhead per string (currently 48 bytes. Could be lower at the cost of additional fragmentation)
 - Fast: intern many millions of strings per second
 - String repository optimization based on frequency analysis (improve locality)
+- Snapshots + restore to a previous state
 
 See [intern.h][intern.h] and [optimize.h][optimize.h] for usage.
 
