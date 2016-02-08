@@ -28,6 +28,6 @@ check: tests
 	@./tests
 
 clean:
-	rm -f tests *.o *.a
+	rm -f tests *.o *.a *.plist
 
 .PHONY: clean
