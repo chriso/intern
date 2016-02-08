@@ -1,4 +1,4 @@
-CFLAGS ?= -std=c99 -pedantic -Wall
+CFLAGS ?= -std=c99 -pedantic -Wall -g
 
 ifeq ($(inline_unsigned), 1)
  CFLAGS += -DINLINE_UNSIGNED
