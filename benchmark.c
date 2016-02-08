@@ -26,4 +26,7 @@ int main() {
 
     printf("Interned 5M unique strings\n");
     printf("Overhead per string: %.1f bytes\n", overhead_per_string);
+
+    // strings_free(strings);
+    return 0;
 }
