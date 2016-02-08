@@ -17,7 +17,7 @@ Fast, immutable string interning for C.
 ## Installation
 
 ```sh
-$ cmake [-DPAGE_SIZE=4096] [-DINLINE_UNSIGNED=1] [-DMMAP_PAGES=1] .
+$ cmake -Wno-dev [-DBUILD_STATIC=1] [-DPAGE_SIZE=4096] [-DINLINE_UNSIGNED=1] [-DMMAP_PAGES=1] .
 $ make install
 ```
 
