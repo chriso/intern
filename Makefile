@@ -24,10 +24,13 @@ libintern.a: intern.o block.o optimize.o
 tests: test.o libintern.a
 	$(CC) $(LDFLAGS) $^ -o $@
 
+benchmark: benchmark.o libintern.a
+	$(CC) $(LDFLAGS) $^ -o $@
+
 check: tests
 	@./tests
 
 clean:
-	rm -f tests *.o *.a *.plist
+	rm -f *.o *.a *.plist tests benchmark
 
 .PHONY: clean
