@@ -1,6 +1,7 @@
 // Left-leaning red-black tree
 // (c) Jason Evans - http://www.canonware.com/rb/
 
+#include <sys/types.h>
 #include <assert.h>
 
 #define	rb_node(a_type)							\

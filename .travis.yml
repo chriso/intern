@@ -5,4 +5,4 @@ compiler:
 
 script:
   - cmake .
-  - ./tests
+  - make check
