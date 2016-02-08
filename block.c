@@ -119,3 +119,10 @@ bool block_restore(struct block *block,
     block->offsets[snapshot->count - 1] = snapshot->offset;
     return true;
 }
+
+size_t block_allocated_bytes(const struct block *block) {
+    return block->count * block->page_size +
+        block->size * sizeof(*block->offsets) +
+        block->size * sizeof(*block->pages) +
+        sizeof(*block);
+}

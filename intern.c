@@ -335,3 +335,10 @@ bool strings_restore(struct strings *strings,
     }
     return true;
 }
+
+size_t strings_allocated_bytes(const struct strings *strings) {
+    return block_allocated_bytes(strings->strings) +
+        block_allocated_bytes(strings->hashes) +
+        block_allocated_bytes(strings->tree_nodes) +
+        sizeof(*strings);
+}

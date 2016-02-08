@@ -75,4 +75,7 @@ void strings_snapshot(const struct strings*, struct strings_snapshot*);
 // was successful, and false if an error occurred
 bool strings_restore(struct strings*, const struct strings_snapshot*);
 
+// Get the total bytes allocated, including overhead
+size_t strings_allocated_bytes(const struct strings*);
+
 #endif

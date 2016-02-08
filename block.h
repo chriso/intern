@@ -30,3 +30,6 @@ void block_snapshot(const struct block*, struct block_snapshot*);
 // the snapshot are removed. This function returns true if the restore was
 // successful, and false if an error occurred
 bool block_restore(struct block*, const struct block_snapshot*);
+
+// Get the total bytes allocated, including overhead
+size_t block_allocated_bytes(const struct block*);
