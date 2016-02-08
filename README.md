@@ -27,8 +27,8 @@ Build your project with `-lintern` and include `<intern/strings.h>`.
 
 See [strings.h][strings.h] and [optimize.h][optimize.h] for more details.
 
-[strings.h]: https://github.com/chriso/intern.c/blob/master/strings.h
-[optimize.h]: https://github.com/chriso/intern.c/blob/master/optimize.h
+[strings.h]: https://github.com/chriso/intern/blob/master/strings.h
+[optimize.h]: https://github.com/chriso/intern/blob/master/optimize.h
 
 ## License
 
