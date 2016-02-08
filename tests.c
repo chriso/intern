@@ -1,14 +1,16 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include <assert.h>
+
+#include "config.h"
+#include "strings.h"
+#include "optimize.h"
+#include "unsigned.h"
 
 #ifdef INLINE_UNSIGNED
 # include <limits.h>
 #endif
-
-#include "strings.h"
-#include "optimize.h"
-#include "unsigned.h"
 
 int main() {
     struct strings *strings = strings_new();
@@ -163,5 +165,7 @@ int main() {
     assert(strings_intern(strings, "foobar") == count / 2 + 1);
 
     strings_free(strings);
+
+    printf("ok\n");
     return 0;
 }

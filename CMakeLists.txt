@@ -12,3 +12,15 @@ add_library (intern strings.c block.c optimize.c)
 
 install (TARGETS intern DESTINATION lib)
 install (FILES strings.h block.h optimize.h DESTINATION include/intern)
+
+enable_testing()
+add_executable (tests tests.c)
+target_link_libraries (tests intern)
+add_test (tests tests)
+set_tests_properties (tests PROPERTIES PASS_REGULAR_EXPRESSION "ok")
+add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS tests)
+
+add_executable (benchmark benchmark.c)
+target_link_libraries (benchmark intern)
+
+set (CMAKE_C_FLAGS "-std=c99 -Wall -pedantic -g -O3")
