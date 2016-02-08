@@ -13,8 +13,7 @@ int main() {
 
     char buffer[12] = {'x'};
     const char *string;
-
-    unsigned count = 1000000;
+    unsigned count = 100000;
 
     // test interning strings
     for (unsigned i = 1; i <= count; i++) {
@@ -46,10 +45,8 @@ int main() {
     // test iterating strings
     struct strings_cursor cursor;
     strings_cursor_init(&cursor, strings);
-
     assert(!strings_cursor_id(&cursor));
     assert(!strings_cursor_string(&cursor));
-
     uint32_t id = 0;
     while (strings_cursor_next(&cursor)) {
         id = strings_cursor_id(&cursor);
@@ -59,7 +56,6 @@ int main() {
         assert(!strcmp(buffer, string));
     }
     assert(id == count);
-
     assert(!strings_cursor_id(&cursor));
     assert(!strings_cursor_string(&cursor));
 
@@ -67,22 +63,18 @@ int main() {
     struct strings *optimized;
     struct strings_frequency *freq = strings_frequency_new();
     assert(freq);
-
     assert(strings_frequency_add(freq, 3));
     assert(strings_frequency_add(freq, 3));
     assert(strings_frequency_add(freq, 3));
     assert(strings_frequency_add(freq, 2));
     assert(strings_frequency_add(freq, 2));
     assert(strings_frequency_add(freq, 5));
-
     optimized = strings_optimize(strings, freq);
     assert(optimized);
     assert(strings_count(optimized) == 3);
-
     assert(strings_lookup(optimized, "x3") == 1);
     assert(strings_lookup(optimized, "x2") == 2);
     assert(strings_lookup(optimized, "x5") == 3);
-
     strings_frequency_free(freq);
     strings_free(optimized);
 
@@ -106,27 +98,20 @@ int main() {
     strings_frequency_free(freq);
     strings_free(optimized);
 
-#ifdef INLINE_UNSIGNED
     // test interning unsigned int strings
+#ifdef INLINE_UNSIGNED
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer, i);
-
         assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
         assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
-
         assert(strings_lookup(strings, buffer) == id);
-
         string = strings_lookup_id(strings, id);
         assert(string && !strcmp(buffer, string));
     }
 #endif
-
     assert(strings_intern(strings, "2147483648") == count + 1);
-
     assert(strings_intern(strings, "4294967295") == count + 2);
-
     assert(strings_intern(strings, "4294967296") == count + 3);
-
 #ifdef INLINE_UNSIGNED
     uint32_t expected = UINT_MAX;
 #else
