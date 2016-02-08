@@ -2,7 +2,7 @@
 #include <string.h>
 #include <limits.h>
 
-#include "intern.h"
+#include "strings.h"
 #include "tree.h"
 #include "branch.h"
 

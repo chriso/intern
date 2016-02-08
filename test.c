@@ -6,7 +6,7 @@
 # include <limits.h>
 #endif
 
-#include "intern.h"
+#include "strings.h"
 #include "optimize.h"
 #include "unsigned.h"
 

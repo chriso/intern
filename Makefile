@@ -18,7 +18,7 @@ else
  CFLAGS += -Os
 endif
 
-libintern.a: intern.o block.o optimize.o
+libintern.a: strings.o block.o optimize.o
 	$(AR) rs $@ $^
 
 tests: test.o libintern.a

@@ -2,7 +2,7 @@
 #include <string.h>
 #include <assert.h>
 
-#include "intern.h"
+#include "strings.h"
 #include "unsigned.h"
 
 int main() {

@@ -1,7 +1,7 @@
 #ifndef INTERN_OPTIMIZE_H_
 #define INTERN_OPTIMIZE_H_
 
-#include "intern.h"
+#include "strings.h"
 
 struct strings_frequency;
 

@@ -1,5 +1,5 @@
-#ifndef INTERN_H_
-#define INTERN_H_
+#ifndef INTERN_STRINGS_H_
+#define INTERN_STRINGS_H_
 
 #include <stdint.h>
 
