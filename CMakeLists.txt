@@ -17,7 +17,6 @@ enable_testing()
 add_executable (tests tests.c)
 target_link_libraries (tests intern)
 add_test (tests tests)
-set_tests_properties (tests PROPERTIES PASS_REGULAR_EXPRESSION "ok")
 add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS tests)
 
 add_executable (benchmark benchmark.c)
