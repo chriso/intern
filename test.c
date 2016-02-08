@@ -2,6 +2,10 @@
 #include <string.h>
 #include <assert.h>
 
+#ifdef INLINE_UNSIGNED
+# include <limits.h>
+#endif
+
 #include "intern.h"
 #include "optimize.h"
 #include "unsigned.h"
@@ -101,10 +105,10 @@ int main() {
 #ifdef INLINE_UNSIGNED
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer, i);
-        assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
-        assert((strings_intern(strings, buffer, &id) & 0x7FFFFFFF) == i);
-        assert(strings_lookup(strings, buffer) == id);
-        string = strings_lookup_id(strings, id);
+        assert((strings_intern(strings, buffer) & 0x7FFFFFFF) == i);
+        assert((strings_intern(strings, buffer) & 0x7FFFFFFF) == i);
+        assert((strings_lookup(strings, buffer) & 0x7FFFFFFF) == i);
+        string = strings_lookup_id(strings, i | 0x80000000);
         assert(string && !strcmp(buffer, string));
     }
 #endif
@@ -133,6 +137,7 @@ int main() {
     assert(strings);
     assert(!strings_count(strings));
     struct strings_snapshot middle_snapshot, end_snapshot;
+    buffer[0] = 'x';
     for (unsigned i = 1; i <= count; i++) {
         unsigned_string(buffer + 1, i);
         assert(strings_intern(strings, buffer) == i);

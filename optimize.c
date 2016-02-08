@@ -4,6 +4,10 @@
 #include "optimize.h"
 #include "branch.h"
 
+#ifdef INLINE_UNSIGNED
+const static uint32_t unsigned_tag = 0x80000000;
+#endif
+
 struct id_count {
     uint32_t id;
     uint32_t count;

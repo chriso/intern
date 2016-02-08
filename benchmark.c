@@ -9,12 +9,12 @@ int main() {
     struct strings *strings = strings_new();
     assert(strings);
 
-    char buffer[12];
+    char buffer[12] = {'x'};
     uint32_t count = 5000000;
     size_t string_bytes = 0;
 
     for (uint32_t id = 1; id <= count; id++) {
-        unsigned_string(buffer, id);
+        unsigned_string(buffer + 1, id);
         string_bytes += strlen(buffer);
         assert(strings_intern(strings, buffer) == id);
     }
