@@ -2,6 +2,7 @@
 #include <string.h>
 #include <limits.h>
 
+#include "config.h"
 #include "strings.h"
 #include "tree.h"
 #include "branch.h"
@@ -228,14 +229,12 @@ uint32_t strings_lookup(const struct strings *strings, const char *string) {
     return 0;
 }
 
-#ifdef INLINE_UNSIGNED
 const char *strings_lookup_id(struct strings *strings, uint32_t id) {
+#ifdef INLINE_UNSIGNED
     if (id & unsigned_tag) {
         unsigned_string(strings->buffer, id & ~unsigned_tag);
         return strings->buffer;
     }
-#else
-const char *strings_lookup_id(const struct strings *strings, uint32_t id) {
 #endif
 
     if (UNLIKELY(id > strings->total)) {

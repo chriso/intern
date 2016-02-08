@@ -8,8 +8,7 @@ struct strings_frequency;
 // Create a new, optimized string repository which stores the most frequently
 // seen strings together. The string with the lowest ID (1) is the most
 // frequently seen string
-struct strings *strings_optimize(const struct strings*,
-                                 struct strings_frequency*);
+struct strings *strings_optimize(struct strings*, struct strings_frequency*);
 
 // Create a new string frequency tracker
 struct strings_frequency *strings_frequency_new(void);

@@ -5,10 +5,6 @@
 
 #include "block.h"
 
-#ifndef PAGE_SIZE
-# define PAGE_SIZE 4096
-#endif
-
 struct strings;
 
 // Create a new repository of strings
@@ -22,7 +18,8 @@ uint32_t strings_count(const struct strings*);
 
 // Intern a string and get back a unique ID. Strings must be NULL-terminated.
 // Note that IDs start at 1 and increment to either UINT_MAX or INT_MAX if
-// INLINE_UNSIGNED is defined. This function returns 0 if an error occurred
+// INLINE_UNSIGNED was defined at compile time. This function returns 0 if an
+// error occurred
 uint32_t strings_intern(struct strings*, const char *string);
 
 // Lookup the ID for a string. This function returns zero if the string
@@ -31,15 +28,11 @@ uint32_t strings_lookup(const struct strings*, const char *string);
 
 // Lookup the string associated with an ID. This function returns NULL
 // if there is no string with that ID in the repository. If INLINE_UNSIGNED
-// is defined then the repository will inline unsigned integers into the ID
-// itself. When looking up the string associated with such an ID, the integer
-// is written into an internal buffer which persists until the function is
-// called again
-#ifdef INLINE_UNSIGNED
-  const char *strings_lookup_id(struct strings*, uint32_t id);
-#else
-  const char *strings_lookup_id(const struct strings*, uint32_t id);
-#endif
+// was defined at compile time then the repository will inline unsigned
+// integers into the ID itself. When looking up the string associated with such
+// an ID, the integer is written into an internal buffer which persists until
+// the function is called again
+const char *strings_lookup_id(struct strings*, uint32_t id);
 
 struct strings_cursor {
     const struct block *strings;
