@@ -10,8 +10,8 @@
 - String repository optimization based on frequency analysis (improve locality)
 - Snapshots + restore to a previous state
 
-See [intern.h][intern.h] and [optimize.h][optimize.h] for usage.
+See [strings.h][strings.h] and [optimize.h][optimize.h] for usage.
 
 
-[intern.h]: https://github.com/chriso/intern.c/blob/master/intern.h
+[strings.h]: https://github.com/chriso/intern.c/blob/master/strings.h
 [optimize.h]: https://github.com/chriso/intern.c/blob/master/optimize.h

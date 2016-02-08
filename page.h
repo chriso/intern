@@ -1,4 +1,4 @@
-#ifdef PAGE_MMAP
+#ifdef MMAP_PAGES
 #include <sys/mman.h>
 
 static inline void *page_alloc(size_t page_size) {

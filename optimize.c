@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "optimize.h"
 #include "branch.h"
 
@@ -125,7 +126,7 @@ bool strings_frequency_add_all(struct strings_frequency *frequency,
     return true;
 }
 
-struct strings *strings_optimize(const struct strings *strings,
+struct strings *strings_optimize(struct strings *strings,
                                  struct strings_frequency *frequency) {
     struct strings *optimized = strings_new();
     if (!optimized) {

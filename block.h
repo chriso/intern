@@ -1,3 +1,6 @@
+#ifndef INTERN_BLOCK_H_
+#define INTERN_BLOCK_H_
+
 #include <stddef.h>
 #include <stdbool.h>
 
@@ -33,3 +36,5 @@ bool block_restore(struct block*, const struct block_snapshot*);
 
 // Get the total bytes allocated, including overhead
 size_t block_allocated_bytes(const struct block*);
+
+#endif

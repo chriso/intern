@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "config.h"
 #include "block.h"
 #include "branch.h"
 #include "page.h"
