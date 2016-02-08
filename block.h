@@ -17,3 +17,19 @@ void block_free(struct block*);
 
 // Allocate a chunk of bytes
 void *block_alloc(struct block*, size_t bytes);
+
+struct block_snapshot {
+    size_t count;
+    size_t offset;
+};
+
+// Create a snapshot. The block can later be restored to this position
+void block_snapshot(const struct block*, struct block_snapshot*);
+
+// Restore the allocator to a previous position. Any allocations made after
+// the snapshot are removed. This function returns true if the restore was
+// successful, and false if an error occurred
+bool block_restore(struct block*, const struct block_snapshot*);
+
+// Reset the block allocator to its initial state
+void block_reset(struct block*);

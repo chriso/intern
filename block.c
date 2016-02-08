@@ -96,3 +96,31 @@ void *block_alloc(struct block *block, size_t size) {
     block->offsets[block->count - 1] += size;
     return (void *)((uintptr_t)page + offset);
 }
+
+void block_snapshot(const struct block *block,
+                    struct block_snapshot *snapshot) {
+    snapshot->count = block->count;
+    snapshot->offset = block->offsets[block->count - 1];
+}
+
+bool block_restore(struct block *block,
+                   const struct block_snapshot *snapshot) {
+    if (!snapshot->count || snapshot->count > block->count) {
+        return false;
+    }
+    if (snapshot->count == block->count &&
+            block->offsets[block->count - 1] < snapshot->offset) {
+        return false;
+    }
+    for (size_t i = snapshot->count; i < block->count; i++) {
+        page_free(block->pages[i], block->page_size);
+    }
+    block->count = snapshot->count;
+    block->offsets[snapshot->count - 1] = snapshot->offset;
+    return true;
+}
+
+void block_reset(struct block *block) {
+    struct block_snapshot pristine = {1, 0};
+    block_restore(block, &pristine);
+}
