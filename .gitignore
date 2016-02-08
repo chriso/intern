@@ -1,5 +1,11 @@
 *.o
 *.a
 *.plist
+
 tests
 benchmark
+
+CMakeCache.txt
+CMakeFiles
+cmake_install.cmake
+install_manifest.txt

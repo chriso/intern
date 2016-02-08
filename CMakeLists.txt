@@ -1,0 +1,5 @@
+cmake_minimum_required (VERSION 2.6)
+project (Intern)
+add_library (intern strings.c block.c optimize.c)
+install (TARGETS intern DESTINATION lib)
+install (FILES strings.h block.h optimize.h DESTINATION include/intern)
