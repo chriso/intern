@@ -27,9 +27,15 @@ Build your project with `-lintern` and include `<intern/strings.h>`.
 
 See [strings.h][strings.h] and [optimize.h][optimize.h] for more details.
 
-[strings.h]: https://github.com/chriso/intern/blob/master/strings.h
-[optimize.h]: https://github.com/chriso/intern/blob/master/optimize.h
+## Extra
+
+[Bindings for Go][go-intern]
 
 ## License
 
 MIT
+
+
+[strings.h]: https://github.com/chriso/intern/blob/master/strings.h
+[optimize.h]: https://github.com/chriso/intern/blob/master/optimize.h
+[go-intern]: https://github.com/chriso/go-intern
