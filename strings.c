@@ -341,3 +341,7 @@ size_t strings_allocated_bytes(const struct strings *strings) {
         block_allocated_bytes(strings->tree_nodes) +
         sizeof(*strings);
 }
+
+size_t strings_page_size() {
+    return PAGE_SIZE;
+}

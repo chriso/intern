@@ -71,4 +71,7 @@ bool strings_restore(struct strings*, const struct strings_snapshot*);
 // Get the total bytes allocated, including overhead
 size_t strings_allocated_bytes(const struct strings*);
 
+// Get the page size
+size_t strings_page_size();
+
 #endif

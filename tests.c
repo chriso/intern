@@ -163,6 +163,8 @@ int main() {
     }
     assert(strings_intern(strings, "foobar") == count / 2 + 1);
 
+    assert(strings_page_size() == PAGE_SIZE);
+
     strings_free(strings);
     return 0;
 }
