@@ -17,9 +17,17 @@ Fast, immutable string interning for C.
 ## Installation
 
 ```sh
-$ cmake -Wno-dev [-DBUILD_STATIC=1] [-DPAGE_SIZE=4096] [-DINLINE_UNSIGNED=1] [-DMMAP_PAGES=1] .
+$ cmake -G 'Unix Makefiles' -Wno-dev [OPTIONS]
 $ make install
 ```
+
+Options are:
+
+- `-DBUILD_STATIC=1`: Build a static library (`libintern.a`) rather than a shared
+  library (`libintern.so` or `libintern.dylib`)
+- `-DMMAP_PAGES=1`: Allocate pages with `mmap(2)` rather than `malloc(3)`
+- `-DPAGE_SIZE=4096`: Set the page size
+- `-DINLINE_UNSIGNED=1`: Inline unsigned integers between 0 and `INT_MAX`
 
 ## Usage
 
