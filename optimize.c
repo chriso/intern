@@ -93,7 +93,7 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
     }
 #endif
     if (UNLIKELY(!id)) {
-        return false;
+        return true;
     }
     if (UNLIKELY(frequency->sorted_by_count)) {
         sort_by_id(frequency);
