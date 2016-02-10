@@ -308,6 +308,12 @@ void strings_snapshot(const struct strings *strings,
 
 bool strings_restore(struct strings *strings,
                      const struct strings_snapshot *snapshot) {
+    struct block *block = strings->tree_nodes;
+    if (snapshot->tree_nodes.count == block->count &&
+            snapshot->tree_nodes.offset == block->offsets[block->count - 1]) {
+        return true;
+    }
+
     if (!block_restore(strings->strings, &snapshot->strings) ||
             !block_restore(strings->hashes, &snapshot->hashes) ||
             !block_restore(strings->tree_nodes, &snapshot->tree_nodes)) {
@@ -315,7 +321,6 @@ bool strings_restore(struct strings *strings,
     }
     strings->total = snapshot->total;
     tree_new(&strings->hash_map);
-    struct block *block = strings->tree_nodes;
     tree_node_t *node, *existing;
     for (size_t page = 0; page < block->count; page++) {
         for (size_t offset = 0; offset < block->offsets[page];
