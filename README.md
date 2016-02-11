@@ -1,6 +1,6 @@
 # Intern
 
-Fast, immutable string interning for C.
+Fast, immutable [string interning][string-interning] for C.
 
 ## What is this?
 
@@ -44,6 +44,7 @@ See [strings.h][strings.h] and [optimize.h][optimize.h] for more details.
 MIT
 
 
+[string-interning]: https://en.wikipedia.org/wiki/String_interning
 [strings.h]: https://github.com/chriso/intern/blob/master/strings.h
 [optimize.h]: https://github.com/chriso/intern/blob/master/optimize.h
 [go-intern]: https://github.com/chriso/go-intern
