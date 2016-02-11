@@ -11,9 +11,9 @@ configure_file (config.h.in config.h)
 
 if (BUILD_STATIC)
   set (INTERN_LIB_TYPE STATIC)
-else (BUILD_STATIC)
+else ()
   set (INTERN_LIB_TYPE SHARED)
-endif (BUILD_STATIC)
+endif ()
 
 add_library (intern ${INTERN_LIB_TYPE} strings.c block.c optimize.c)
 
