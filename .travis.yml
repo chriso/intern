@@ -1,8 +1,20 @@
-language: cpp
+language: c
+
+os:
+  - linux
+  - osx
+
 compiler:
   - gcc
   - clang
 
+env:
+  matrix:
+    - INTERN_OPTS="-DINLINE_UNSIGNED=1"
+    - INTERN_OPTS="-DINLINE_UNSIGNED=0"
+    - INTERN_OPTS="-DMMAP_PAGES=1"
+    - INTERN_OPTS="-DMMAP_PAGES=0"
+
 script:
-  - cmake .
+  - cmake . ${INTERN_OPTS}
   - make check
