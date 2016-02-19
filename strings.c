@@ -11,7 +11,7 @@
 #include "unsigned.h"
 
 const static uint32_t unsigned_tag = 0x80000000;
-const static uint32_t id_overflow = unsigned_tag;
+const static uint32_t id_overflow = 0x80000000;
 
 static int is_small_unsigned(const char *string) {
     char c;
