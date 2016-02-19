@@ -1,5 +1,7 @@
 # Intern
 
+[![Build status][travis-badge]][travis-url]
+
 Fast, immutable [string interning][string-interning] for C.
 
 ## What is this?
@@ -44,7 +46,12 @@ See [strings.h][strings.h] and [optimize.h][optimize.h] for more details.
 MIT
 
 
+[travis-badge]: http://img.shields.io/travis/chriso/intern.svg
+[travis-url]: https://travis-ci.org/chriso/intern
+
 [string-interning]: https://en.wikipedia.org/wiki/String_interning
+
 [strings.h]: https://github.com/chriso/intern/blob/master/strings.h
 [optimize.h]: https://github.com/chriso/intern/blob/master/optimize.h
+
 [go-intern]: https://github.com/chriso/go-intern
