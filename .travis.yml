@@ -3,6 +3,11 @@ compiler:
   - gcc
   - clang
 
+env:
+  matrix:
+    - INTERN_OPTS="-DINLINE_UNSIGNED=1"
+    - INTERN_OPTS="-DINLINE_UNSIGNED=0"
+
 script:
-  - cmake .
+  - cmake . ${INTERN_OPTS}
   - make check
