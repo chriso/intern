@@ -7,6 +7,8 @@ env:
   matrix:
     - INTERN_OPTS="-DINLINE_UNSIGNED=1"
     - INTERN_OPTS="-DINLINE_UNSIGNED=0"
+    - INTERN_OPTS="-DMMAP_PAGES=1"
+    - INTERN_OPTS="-DMMAP_PAGES=0"
 
 script:
   - cmake . ${INTERN_OPTS}
