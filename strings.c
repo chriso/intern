@@ -64,6 +64,7 @@ struct strings {
     struct block *tree_nodes;
     tree_t hash_map;
     uint32_t total;
+    uint32_t hash_seed;
 #ifdef INLINE_UNSIGNED
     char buffer[11];
 #endif
@@ -85,6 +86,7 @@ struct strings *strings_new() {
     tree_new(&strings->hash_map);
 
     strings->total = 0;
+    strings->hash_seed = 5381;
 
     return strings;
 
@@ -109,13 +111,22 @@ void strings_free(struct strings *strings) {
     free(strings);
 }
 
-static uint32_t strings_hash(const char *string) {
-    uint32_t hash = 5381;
+static uint32_t strings_hash(const struct strings *strings,
+                             const char *string) {
+    uint32_t hash = strings->hash_seed;
     char c;
     while ((c = *string++)) {
         hash = ((hash << 5) + hash) + (uint32_t)c;
     }
     return hash;
+}
+
+bool strings_hash_seed(struct strings *strings, uint32_t seed) {
+    if (strings->total) {
+        return false;
+    }
+    strings->hash_seed = seed;
+    return true;
 }
 
 static tree_node_t *create_node(struct strings *strings, uint32_t hash,
@@ -190,7 +201,7 @@ uint32_t strings_intern(struct strings *strings, const char *string) {
     }
 #endif
 
-    uint32_t hash = strings_hash(string);
+    uint32_t hash = strings_hash(strings, string);
     tree_node_t *node = find_node(strings, hash);
     if (node) {
         if (UNLIKELY(strcmp(node->string, string))) {
@@ -216,7 +227,7 @@ uint32_t strings_lookup(const struct strings *strings, const char *string) {
     }
 #endif
 
-    uint32_t hash = strings_hash(string);
+    uint32_t hash = strings_hash(strings, string);
     tree_node_t *node = find_node(strings, hash);
     if (node) {
         do {

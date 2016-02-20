@@ -74,4 +74,8 @@ size_t strings_allocated_bytes(const struct strings*);
 // Get the page size
 size_t strings_page_size();
 
+// Set the hash seed. This must be done before adding strings to the
+// repository
+bool strings_hash_seed(struct strings *strings, uint32_t seed);
+
 #endif
