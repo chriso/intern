@@ -30,6 +30,7 @@ Options are:
 - `-DMMAP_PAGES=1`: Allocate pages with `mmap(2)` rather than `malloc(3)`
 - `-DPAGE_SIZE=4096`: Set the page size
 - `-DINLINE_UNSIGNED=1`: Inline unsigned integers between 0 and `INT_MAX`
+- `-DDEBUG=1`: Create a debug build
 
 ## Usage
 

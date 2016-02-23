@@ -6,6 +6,7 @@ set (PAGE_SIZE 4096 CACHE STRING "Page size for allocations")
 option (MMAP_PAGES "Allocate pages with mmap(2)" OFF)
 option (INLINE_UNSIGNED "Inline unsigned integers into the ID" OFF)
 option (BUILD_STATIC "Build a static library" OFF)
+option (DEBUG "Create a debug build" OFF)
 
 configure_file (config.h.in config.h)
 
@@ -29,4 +30,10 @@ add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND} DEPENDS tests)
 add_executable (benchmark benchmark.c)
 target_link_libraries (benchmark intern)
 
-set (CMAKE_C_FLAGS "-std=c99 -Wall -pedantic -g -O3")
+if (DEBUG)
+  set (FLAGS "-O0")
+else ()
+  set (FLAGS "-O3 -march=native")
+endif()
+
+set (CMAKE_C_FLAGS "-std=c99 -Wall -pedantic -g ${FLAGS}")
