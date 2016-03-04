@@ -55,7 +55,7 @@ uint32_t strings_cursor_id(const struct strings_cursor*);
 struct strings_snapshot {
     struct block_snapshot strings;
     struct block_snapshot hashes;
-    struct block_snapshot tree_nodes;
+    struct block_snapshot index;
     uint32_t total;
 };
 

@@ -61,7 +61,7 @@ rb_gen(static, tree_, tree_t, tree_node_t, tree_link, tree_cmp)
 struct strings {
     struct block *hashes;
     struct block *strings;
-    struct block *tree_nodes;
+    struct block *index;
     tree_t hash_map;
     uint32_t total;
     uint32_t hash_seed;
@@ -78,8 +78,8 @@ struct strings *strings_new() {
 
     strings->hashes = block_new(PAGE_SIZE);
     strings->strings = block_new(PAGE_SIZE);
-    strings->tree_nodes = block_new(PAGE_SIZE);
-    if (!strings->hashes || !strings->strings || !strings->tree_nodes) {
+    strings->index = block_new(PAGE_SIZE);
+    if (!strings->hashes || !strings->strings || !strings->index) {
         goto error;
     }
 
@@ -97,8 +97,8 @@ error:
     if (strings->strings) {
         block_free(strings->strings);
     }
-    if (strings->tree_nodes) {
-        block_free(strings->tree_nodes);
+    if (strings->index) {
+        block_free(strings->index);
     }
     free(strings);
     return NULL;
@@ -107,7 +107,7 @@ error:
 void strings_free(struct strings *strings) {
     block_free(strings->hashes);
     block_free(strings->strings);
-    block_free(strings->tree_nodes);
+    block_free(strings->index);
     free(strings);
 }
 
@@ -131,7 +131,7 @@ bool strings_hash_seed(struct strings *strings, uint32_t seed) {
 
 static tree_node_t *create_node(struct strings *strings, uint32_t hash,
                                 const char *string) {
-    tree_node_t *node = block_alloc(strings->tree_nodes, sizeof(*node));
+    tree_node_t *node = block_alloc(strings->index, sizeof(*node));
     if (UNLIKELY(!node)) {
         return NULL;
     }
@@ -313,21 +313,21 @@ void strings_snapshot(const struct strings *strings,
                       struct strings_snapshot *snapshot) {
     block_snapshot(strings->strings, &snapshot->strings);
     block_snapshot(strings->hashes, &snapshot->hashes);
-    block_snapshot(strings->tree_nodes, &snapshot->tree_nodes);
+    block_snapshot(strings->index, &snapshot->index);
     snapshot->total = strings->total;
 }
 
 bool strings_restore(struct strings *strings,
                      const struct strings_snapshot *snapshot) {
-    struct block *block = strings->tree_nodes;
-    if (snapshot->tree_nodes.count == block->count &&
-            snapshot->tree_nodes.offset == block->offsets[block->count - 1]) {
+    struct block *block = strings->index;
+    if (snapshot->index.count == block->count &&
+            snapshot->index.offset == block->offsets[block->count - 1]) {
         return true;
     }
 
     if (!block_restore(strings->strings, &snapshot->strings) ||
             !block_restore(strings->hashes, &snapshot->hashes) ||
-            !block_restore(strings->tree_nodes, &snapshot->tree_nodes)) {
+            !block_restore(strings->index, &snapshot->index)) {
         return false;
     }
     strings->total = snapshot->total;
@@ -354,7 +354,7 @@ bool strings_restore(struct strings *strings,
 size_t strings_allocated_bytes(const struct strings *strings) {
     return block_allocated_bytes(strings->strings) +
         block_allocated_bytes(strings->hashes) +
-        block_allocated_bytes(strings->tree_nodes) +
+        block_allocated_bytes(strings->index) +
         sizeof(*strings);
 }
 
