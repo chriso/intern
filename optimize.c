@@ -3,7 +3,6 @@
 
 #include "config.h"
 #include "optimize.h"
-#include "branch.h"
 
 #ifdef INLINE_UNSIGNED
 const static uint32_t unsigned_tag = 0x80000000;
@@ -52,7 +51,7 @@ static bool resize_counts(struct strings_frequency *frequency,
     }
     struct id_count *counts = realloc(frequency->counts,
                                       sizeof(*counts) * new_size);
-    if (UNLIKELY(!counts)) {
+    if (!counts) {
         return false;
     }
     memset(counts + frequency->size, 0,
@@ -92,14 +91,14 @@ bool strings_frequency_add(struct strings_frequency *frequency, uint32_t id) {
         return true;
     }
 #endif
-    if (UNLIKELY(!id)) {
+    if (!id) {
         return true;
     }
-    if (UNLIKELY(frequency->sorted_by_count)) {
+    if (frequency->sorted_by_count) {
         sort_by_id(frequency);
     }
     if (frequency->max_id < id) {
-        if (UNLIKELY(frequency->size < id)) {
+        if (frequency->size < id) {
             if (!resize_counts(frequency, id)) {
                 return false;
             }
@@ -146,7 +145,7 @@ struct strings *strings_optimize(struct strings *strings,
             break;
         }
         const char *string = strings_lookup_id(strings, id_count->id);
-        if (UNLIKELY(!string || !strings_intern(optimized, string))) {
+        if (!string || !strings_intern(optimized, string)) {
             goto error;
         }
     }

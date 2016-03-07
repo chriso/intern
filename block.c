@@ -5,7 +5,6 @@
 
 #include "config.h"
 #include "block.h"
-#include "branch.h"
 #include "page.h"
 
 struct block *block_new(size_t page_size) {
@@ -57,22 +56,22 @@ void block_free(struct block *block) {
 
 __attribute__ ((noinline))
 static void *add_page(struct block *block) {
-    if (UNLIKELY(block->count == block->size)) {
+    if (block->count == block->size) {
         size_t new_size = block->size * 2;
         void **pages = realloc(block->pages, sizeof(*pages) * new_size);
-        if (UNLIKELY(!pages)) {
+        if (!pages) {
             return NULL;
         }
         block->pages = pages;
         size_t *offsets = realloc(block->offsets, sizeof(*offsets) * new_size);
-        if (UNLIKELY(!offsets)) {
+        if (!offsets) {
             return NULL;
         }
         block->offsets = offsets;
         block->size = new_size;
     }
     void *page = page_alloc(block->page_size);
-    if (UNLIKELY(!page)) {
+    if (!page) {
         return NULL;
     }
     block->pages[block->count] = page;
@@ -82,14 +81,14 @@ static void *add_page(struct block *block) {
 }
 
 void *block_alloc(struct block *block, size_t size) {
-    if (UNLIKELY(size > block->page_size)) {
+    if (size > block->page_size) {
         return NULL;
     }
     size_t offset = block->offsets[block->count - 1];
     void *page;
-    if (UNLIKELY(block->page_size - offset < size)) {
+    if (block->page_size - offset < size) {
         page = add_page(block);
-        if (UNLIKELY(!page)) {
+        if (!page) {
             return NULL;
         }
         offset = 0;

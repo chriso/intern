@@ -5,7 +5,6 @@
 #include "config.h"
 #include "strings.h"
 #include "tree.h"
-#include "branch.h"
 
 #ifdef INLINE_UNSIGNED
 #include "unsigned.h"
@@ -132,26 +131,26 @@ bool strings_hash_seed(struct strings *strings, uint32_t seed) {
 static tree_node_t *create_node(struct strings *strings, uint32_t hash,
                                 const char *string) {
     tree_node_t *node = block_alloc(strings->index, sizeof(*node));
-    if (UNLIKELY(!node)) {
+    if (!node) {
         return NULL;
     }
     node->hash = hash;
     node->next = NULL;
     node->id = strings->total + 1;
-    if (UNLIKELY(node->id == id_overflow)) {
+    if (node->id == id_overflow) {
         return NULL;
     }
 
     size_t len = strlen(string);
     void *string_ptr = block_alloc(strings->strings, len + 1);
-    if (UNLIKELY(!string_ptr)) {
+    if (!string_ptr) {
         return NULL;
     }
     memcpy(string_ptr, string, len + 1);
     node->string = (const char *)string_ptr;
 
     uint32_t *hash_ptr = block_alloc(strings->hashes, sizeof(*hash_ptr));
-    if (UNLIKELY(!hash_ptr)) {
+    if (!hash_ptr) {
         return NULL;
     }
     *hash_ptr = hash;
@@ -174,7 +173,7 @@ static bool strings_intern_collision(struct strings *strings,
     for (;;) {
         if (!node->next) {
             node = node->next = create_node(strings, hash, string);
-            if (UNLIKELY(!node)) {
+            if (!node) {
                 return 0;
             }
             break;
@@ -195,7 +194,7 @@ uint32_t strings_intern(struct strings *strings, const char *string) {
 #ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
-        if (LIKELY(number < unsigned_tag)) {
+        if (number < unsigned_tag) {
             return number | unsigned_tag;
         }
     }
@@ -204,11 +203,11 @@ uint32_t strings_intern(struct strings *strings, const char *string) {
     uint32_t hash = strings_hash(strings, string);
     tree_node_t *node = find_node(strings, hash);
     if (node) {
-        if (UNLIKELY(strcmp(node->string, string))) {
+        if (strcmp(node->string, string)) {
             return strings_intern_collision(strings, node, string, hash);
         }
     } else {
-        if (UNLIKELY(!(node = create_node(strings, hash, string)))) {
+        if (!(node = create_node(strings, hash, string))) {
             return 0;
         }
         tree_insert(&strings->hash_map, node);
@@ -221,7 +220,7 @@ uint32_t strings_lookup(const struct strings *strings, const char *string) {
 #ifdef INLINE_UNSIGNED
     if (is_small_unsigned(string)) {
         uint32_t number = to_unsigned(string);
-        if (LIKELY(number < unsigned_tag)) {
+        if (number < unsigned_tag) {
             return number | unsigned_tag;
         }
     }
@@ -231,7 +230,7 @@ uint32_t strings_lookup(const struct strings *strings, const char *string) {
     tree_node_t *node = find_node(strings, hash);
     if (node) {
         do {
-            if (LIKELY(!strcmp(node->string, string))) {
+            if (!strcmp(node->string, string)) {
                 return node->id;
             }
         } while ((node = node->next));
@@ -248,7 +247,7 @@ const char *strings_lookup_id(struct strings *strings, uint32_t id) {
     }
 #endif
 
-    if (UNLIKELY(id > strings->total)) {
+    if (id > strings->total) {
         return NULL;
     }
 
@@ -262,7 +261,7 @@ const char *strings_lookup_id(struct strings *strings, uint32_t id) {
 
     tree_node_t *node = find_node(strings, hash);
     do {
-        if (LIKELY(node->id == id)) {
+        if (node->id == id) {
             return node->string;
         }
     } while ((node = node->next));
@@ -280,16 +279,16 @@ void strings_cursor_init(struct strings_cursor *cursor,
 
 bool strings_cursor_next(struct strings_cursor *cursor) {
     const struct block *block = cursor->strings;
-    if (LIKELY(cursor->id)) {
+    if (cursor->id) {
         const char *string = strings_cursor_string(cursor);
         cursor->offset += strlen(string) + 1;
-        if (UNLIKELY(cursor->offset >= block->offsets[cursor->page])) {
+        if (cursor->offset >= block->offsets[cursor->page]) {
             cursor->page++;
             cursor->offset = 0;
         }
     }
-    if (UNLIKELY(cursor->page >= block->count ||
-            cursor->offset >= block->offsets[cursor->page])) {
+    if (cursor->page >= block->count ||
+            cursor->offset >= block->offsets[cursor->page]) {
         cursor->id = 0;
         return false;
     }
@@ -298,7 +297,7 @@ bool strings_cursor_next(struct strings_cursor *cursor) {
 }
 
 const char *strings_cursor_string(const struct strings_cursor *cursor) {
-    if (UNLIKELY(!cursor->id)) {
+    if (!cursor->id) {
         return NULL;
     }
     const void *page = cursor->strings->pages[cursor->page];
@@ -338,7 +337,7 @@ bool strings_restore(struct strings *strings,
                 offset += sizeof(tree_node_t)) {
             node = (tree_node_t *)((uintptr_t)block->pages[page] + offset);
             existing = find_node(strings, node->hash);
-            if (UNLIKELY(existing)) {
+            if (existing) {
                 while (existing->next) {
                     existing = existing->next;
                 }
