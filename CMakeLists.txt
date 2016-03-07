@@ -36,4 +36,4 @@ else ()
   set (FLAGS "-O3 -march=native")
 endif()
 
-set (CMAKE_C_FLAGS "-std=c99 -Wall -pedantic -g ${FLAGS}")
+set (CMAKE_C_FLAGS "-std=c99 -Wall -pedantic -g -D_GNU_SOURCE ${FLAGS}")
