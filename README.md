@@ -1,6 +1,4 @@
-# Intern
-
-[![Build status][travis-badge]][travis-url]
+# Intern [![Build status][travis-badge]][travis-url]
 
 Fast, immutable [string interning][string-interning] for C.
 
