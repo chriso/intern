@@ -13,6 +13,7 @@ option (INLINE_UNSIGNED "Inline unsigned integers into the ID" OFF)
 option (BUILD_STATIC "Build a static library" OFF)
 
 configure_file (config.h.in config.h)
+include_directories (${CMAKE_CURRENT_BINARY_DIR})
 
 if (BUILD_STATIC)
   set (INTERN_LIB_TYPE STATIC)
